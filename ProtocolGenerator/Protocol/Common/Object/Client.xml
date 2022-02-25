@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Client"
+	 desc="客户端" >
+	<val name="id" type="Long" desc="客户端 ID"/>
+	<val name="platform" type="String" desc="平台"/>
+</object>

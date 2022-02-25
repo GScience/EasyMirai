@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Friend"
+	 desc="好友" >
+	<val name="id" type="Long" desc="QQ ID"/>
+	<val name="nickname" type="String" desc="昵称"/>
+	<val name="remark" type="String" desc="备注"/>
+</object>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message 
+	xmlns="http://tempuri.org/Mirai.xsd" 
+	name="Source"
+	desc="消息源">
+	<val name="id" type="Int" desc="消息的识别号，用于引用回复（Source类型永远为chain的第一个元素）"/>
+	<val name="time" type="Int" desc="时间戳"/>
+</message>

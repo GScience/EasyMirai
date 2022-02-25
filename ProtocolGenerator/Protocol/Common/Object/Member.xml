@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Member"
+	 desc="群成员" >
+	<val name="id" type="Long" desc="QQ ID"/>
+	<val name="memberName" type="String" desc="成员昵称"/>
+	<val name="specialTitle" type="String" desc="成员头衔"/>
+	<val name="permission" type="String" desc="成员权限（可能为OWNER或MEMBER）"/>
+	<val name="joinTimestamp" type="Long" desc="成员加入时间戳"/>
+	<val name="lastSpeakTimestamp" type="Long" desc="成员上次发言时间戳"/>
+	<val name="muteTimeRemaining" type="Long" desc="成员禁言剩余时间"/>
+	<ref name="group" ref="Group" desc="群信息"/>
+</object>

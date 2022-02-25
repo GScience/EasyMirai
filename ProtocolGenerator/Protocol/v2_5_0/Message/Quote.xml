@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message 
+	xmlns="http://tempuri.org/Mirai.xsd" 
+	name="Quote"
+	desc="引用消息">
+	<val name="id" type="Int" desc="被引用回复的原消息的messageId"/>
+	<val name="groupId" type="Long" desc="被引用回复的原消息所接收的群号，当为好友消息时为0" />
+	<val name="senderId" type="Long" desc="被引用回复的原消息的发送者的QQ号" />
+	<val name="targetId" type="Long" desc="被引用回复的原消息的接收者者的QQ号（或群号）"/>
+	<refList name="origin" desc="被引用回复的原消息的消息链对象" ref="Message"/>
+</message>

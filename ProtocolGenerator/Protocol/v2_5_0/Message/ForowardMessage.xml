@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="Forward"
+	desc="转发消息">
+	<objList name="nodeList" desc="消息">
+		<val name="senderId" type="Long" desc="发送人QQ号"/>
+		<val name="time" type="Int" desc="发送时间"/>
+		<val name="senderName" type="String" desc="显示名称"/>
+		<val name="messageId" type="Int" desc="可以只使用消息messageId，从缓存中读取一条消息作为节点"/>
+		<refList name="messageChain" ref="Message" desc="消息数组"/>
+	</objList>
+</message>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Group"
+	 desc="群组" >
+	<val name="id" type="Long" desc="群 ID"/>
+	<val name="name" type="String" desc="群名称"/>
+	<val name="permission" type="String" desc="群权限（可能为OWNER或MEMBER）"/>
+</object>

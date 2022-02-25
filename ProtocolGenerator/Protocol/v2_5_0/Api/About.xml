@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="About"
+	 desc="关于" >
+	<request/>
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<obj name="data" desc="数据">
+			<val name="version" type="String" desc="版本"/>
+		</obj>
+	</response>
+	<adapter>
+		<http cmd="/about" method="Get" desc="使用此方法获取插件的信息，如版本号"/>
+		<ws cmd="about" desc="使用此方法获取插件的信息，如版本号"/>
+	</adapter>
+</api>

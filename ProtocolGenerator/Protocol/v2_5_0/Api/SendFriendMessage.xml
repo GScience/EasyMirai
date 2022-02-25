@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="SendFriendMessage"
+	 desc="发送好友消息" >
+	<request>
+		<val name="sessionKey" type="String" desc="已经激活的Session"/>
+		<val name="target" type="Long" desc="可选，发送消息目标好友的QQ号"/>
+		<refList name="messageChain" ref="Message" desc="消息链，是一个消息对象构成的数组"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<val name="messageId" type="Int" desc="一个Int类型属性，标识本条消息，用于撤回和引用回复"/>
+	</response>
+
+	<adapter>
+		<http cmd="/sendFriendMessage" method="Post" desc="使用此方法向指定好友发送消息"/>
+		<ws cmd="sendFriendMessage" desc="使用此方法向指定好友发送消息"/>
+	</adapter>
+</api>

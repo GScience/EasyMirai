@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Protocol\Common\Object\Client.xml" />
+    <None Remove="Protocol\Common\Object\Friend.xml" />
+    <None Remove="Protocol\Common\Object\Group.xml" />
+    <None Remove="Protocol\Common\Object\Member.xml" />
+    <None Remove="Protocol\v2_5_0\Api\About.xml" />
+    <None Remove="Protocol\v2_5_0\Api\SendFriendMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Message\ForowardMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Plain.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Quote.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Source.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Protocol\Common\Object\Client.xml" />
+    <EmbeddedResource Include="Protocol\Common\Object\Friend.xml" />
+    <EmbeddedResource Include="Protocol\Common\Object\Group.xml" />
+    <EmbeddedResource Include="Protocol\Common\Object\Member.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\About.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\SendFriendMessage.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\ForowardMessage.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Quote.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Source.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Plain.xml" />
+  </ItemGroup>
+
+</Project>

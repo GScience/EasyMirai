@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Mirai"
+    targetNamespace="http://tempuri.org/Mirai.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/Mirai.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+	<!--Object Group-->
+	<xs:group name="objectGroup">
+		<xs:sequence>
+			
+			<xs:element name="val" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string" use="required"/>
+					<xs:attribute name="type" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="Boolean" />
+								<xs:enumeration value="Int" />
+								<xs:enumeration value="Long" />
+								<xs:enumeration value="String" />
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="obj" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:group ref="objectGroup"/>
+					<xs:attribute name="name" type="xs:string" use="required"/>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="ref" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string"/>
+					<xs:attribute name="ref" type="xs:string"/>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="valList" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string"/>
+					<xs:attribute name="type" type="xs:string"/>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="refList" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string"/>
+					<xs:attribute name="ref" type="xs:string"/>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+			
+			<xs:element name="objList" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:group ref="objectGroup"/>
+					<xs:attribute name="name" type="xs:string" use="required"/>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+			
+		</xs:sequence>
+	</xs:group>
+	
+	<!--Object Type-->
+	<xs:complexType name="userObject">
+		<xs:group ref="objectGroup"/>
+	</xs:complexType>
+	
+	<!--Api-->
+	<xs:element name="api">
+		<xs:complexType>
+			<xs:sequence>
+
+				<!--Request-->
+				<xs:element name="request" minOccurs="1" maxOccurs="1" type="userObject"/>
+
+				<!--Response-->
+				<xs:element name="response" minOccurs="1" maxOccurs="1" type="userObject"/>
+
+				<!--Adapter-->
+				<xs:element name="adapter" minOccurs="1" maxOccurs="1" type="adapter"/>
+				
+			</xs:sequence>
+			
+			<!--Api Name-->
+			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="desc" type="xs:string"/>
+			
+		</xs:complexType>
+	</xs:element>
+	
+	<!--Api Adapter-->
+	<xs:complexType name="adapter">
+		<xs:sequence>
+			
+			<!--Http-->
+			<xs:element name="http" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:attribute name="method" use="required">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="Get"/>
+								<xs:enumeration value="Post"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="cmd" use="required"/>
+					<!--Default content type is application/json-->
+					<xs:attribute name="content">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="application/json"/>
+								<xs:enumeration value="multipart/form-data"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+			
+			<!--Websocket-->
+			<xs:element name="ws" minOccurs="0" maxOccurs="1">
+				<xs:complexType>
+					<xs:attribute name="cmd" use="required"/>
+					<xs:attribute name="desc"/>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<!--User Defined Type-->
+	<xs:complexType name="userType">
+		<!--Args-->
+		<xs:sequence>
+			<xs:group ref="objectGroup"/>
+		</xs:sequence>
+
+		<!--Type Name-->
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="desc" type="xs:string"/>
+	</xs:complexType>
+	
+	<!--Message-->
+	<xs:element name="message" type="userType"/>
+	
+	<!--User Defined Type-->
+	<xs:element name="object" type="userType"/>
+	
+</xs:schema>
