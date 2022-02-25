@@ -15,6 +15,11 @@ namespace ProtocolGenerator
     public class MiraiModule
     {
         /// <summary>
+        /// 仅生成期间使用 Tag
+        /// </summary>
+        private const string TagOnlyForGenerate = "[OnlyForGenerating] ";
+
+        /// <summary>
         /// 已经加载的所有对象
         /// </summary>
         public Dictionary<ProtocolComponent, ClassDef> ClassTable = new();
@@ -81,11 +86,11 @@ namespace ProtocolGenerator
 
                 var http = new MemberDef(apiDef.Name, apiDef.Description, MemberType.Object, _functionDef);
                 _httpAdapter.Members[http.Name] = http;
-                _httpAdapter.ConstString[apiDef.Name + "Cmd"] = cmd;
-                _httpAdapter.ConstString[apiDef.Name + "ContentType"] = contentType;
-                _httpAdapter.ConstString[apiDef.Name + "Method"] = method.ToString();
+                _httpAdapter.ConstString[apiDef.Name + "Cmd"] = (cmd, TagOnlyForGenerate + "命令字");
+                _httpAdapter.ConstString[apiDef.Name + "ContentType"] = (contentType, TagOnlyForGenerate + "Post 请求时内容类型");
+                _httpAdapter.ConstString[apiDef.Name + "Method"] = (method.ToString(), TagOnlyForGenerate + "请求方法");
 
-                var api = new MemberDef(apiDef.Name + "ApiDef", apiDef.Description, MemberType.Object, classDef);
+                var api = new MemberDef(apiDef.Name + "Api", TagOnlyForGenerate + apiDef.Description, MemberType.Object, classDef);
                 _httpAdapter.Members[api.Name] = api;
             }
             if (apiDef.WsAdapter != null)
@@ -94,9 +99,9 @@ namespace ProtocolGenerator
 
                 var ws = new MemberDef(apiDef.Name, apiDef.Description, MemberType.Object, _functionDef);
                 _wsAdapter.Members[apiDef.Name] = ws;
-                _wsAdapter.ConstString[apiDef.Name + "Cmd"] = cmd;
+                _wsAdapter.ConstString[apiDef.Name + "Cmd"] = (cmd, TagOnlyForGenerate + "命令字");
 
-                var api = new MemberDef(apiDef.Name + "ApiDef", apiDef.Description, MemberType.Object, classDef);
+                var api = new MemberDef(apiDef.Name + "Api", TagOnlyForGenerate + apiDef.Description, MemberType.Object, classDef);
                 _wsAdapter.Members[api.Name] = api;
             }
 
@@ -117,7 +122,7 @@ namespace ProtocolGenerator
         private ClassDef FromMessageDef(MessageDef msg)
         {
             var classDef = FromObjectDef(msg, _messageBaseDef, "Message");
-            classDef.ConstString["Type"] = msg.Name;
+            classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "消息类型");
             return classDef;
         }
 

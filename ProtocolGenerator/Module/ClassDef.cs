@@ -19,7 +19,7 @@ namespace ProtocolGenerator.Module
         /// <summary>
         /// 静态字符串
         /// </summary>
-        public Dictionary<string, string> ConstString { get; private set; } = new();
+        public Dictionary<string, (string value, string description)> ConstString { get; private set; } = new();
 
         /// <summary>
         /// 基类
@@ -59,7 +59,7 @@ namespace ProtocolGenerator.Module
             var memberStr = "";
 
             foreach (var constStr in ConstString)
-                memberStr += $"{retraction}\tconst string {constStr.Key} = \"{constStr.Value}\";\n";
+                memberStr += $"{retraction}\tconst string {constStr.Key} = \"{constStr.Value.value}\"; //{constStr.Value.description}\n";
 
             foreach (var innerClass in Classes)
                 memberStr += $"{retraction}\t{innerClass.ToString(depth + 1)}\n";
