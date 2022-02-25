@@ -12,7 +12,7 @@ namespace ProtocolGenerator.Extensions
         {
             if (string.IsNullOrEmpty(str))
                 return str;
-            return str.First().ToString().ToUpper() + (str.Length > 1 ? str[1..] : "");
+            return str.First().ToString().ToUpper() + (str.Length > 1 ? str.Substring(1) : "");
         }
     }
 }

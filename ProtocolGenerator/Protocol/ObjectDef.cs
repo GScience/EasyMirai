@@ -25,7 +25,7 @@ namespace ProtocolGenerator.Protocol
             _refName = refName;
         }
 
-        public ObjectDef? TypeDef
+        public ObjectDef TypeDef
         {
             get
             {
@@ -49,7 +49,8 @@ namespace ProtocolGenerator.Protocol
         /// <summary>
         /// 全局类型定义，负责类型引用查找
         /// </summary>
-        public static readonly Dictionary<string, ObjectDef> TypeTable = new();
+        public static readonly Dictionary<string, ObjectDef> TypeTable 
+            = new Dictionary<string, ObjectDef>();
 
         public string Name { get; protected set; } = "";
         public string Description { get; protected set; } = "";
@@ -57,32 +58,38 @@ namespace ProtocolGenerator.Protocol
         /// <summary>
         /// 值
         /// </summary>
-        public Dictionary<string, (ValDef valDef, string description)> Values { get; private set; } = new ();
+        public Dictionary<string, (ValDef valDef, string description)> Values { get; private set; } 
+            = new Dictionary<string, (ValDef valDef, string description)>();
         
         /// <summary>
         /// 对象
         /// </summary>
-        public Dictionary<string, (ObjectDef objectDef, string description)> Objects { get; private set; } = new();
+        public Dictionary<string, (ObjectDef objectDef, string description)> Objects { get; private set; } 
+            = new Dictionary<string, (ObjectDef objectDef, string description)>();
 
         /// <summary>
         /// 引用
         /// </summary>
-        public Dictionary<string, (ObjectRef objectRef, string description)> References { get; private set; } = new();
+        public Dictionary<string, (ObjectRef objectRef, string description)> References { get; private set; } 
+            = new Dictionary<string, (ObjectRef objectRef, string description)> ();
 
         /// <summary>
         /// 值列表
         /// </summary>
-        public Dictionary<string, (ValDef valDef, string description)> ValueList { get; private set; } = new();
+        public Dictionary<string, (ValDef valDef, string description)> ValueList { get; private set; }
+            = new Dictionary<string, (ValDef valDef, string description)>();
 
         /// <summary>
         /// 对象列表
         /// </summary>
-        public Dictionary<string, (ObjectDef objectDef, string description)> ObjectList { get; private set; } = new();
+        public Dictionary<string, (ObjectDef objectDef, string description)> ObjectList { get; private set; } 
+            = new Dictionary<string, (ObjectDef objectDef, string description)>();
 
         /// <summary>
         /// 引用列表
         /// </summary>
-        public Dictionary<string, (ObjectRef objectRef, string description)> ReferenceList { get; private set; } = new();
+        public Dictionary<string, (ObjectRef objectRef, string description)> ReferenceList { get; private set; } 
+            = new Dictionary<string, (ObjectRef objectRef, string description)>();
 
         public ObjectDef() { }
 
@@ -106,7 +113,7 @@ namespace ProtocolGenerator.Protocol
         /// </summary>
         /// <param name="version"></param>
         /// <param name="xml"></param>
-        public override void FromXml(Version version, XmlElement? xml)
+        public override void FromXml(Version version, XmlElement xml)
         {
             if (xml == null)
                 return;

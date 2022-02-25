@@ -17,7 +17,7 @@ namespace ProtocolGenerator.Protocol
         /// </summary>
         /// <param name="version"></param>
         /// <param name="xml"></param>
-        public override void FromXml(Version version, XmlElement? xml)
+        public override void FromXml(Version version, XmlElement xml)
         {
             if (xml == null)
                 return;

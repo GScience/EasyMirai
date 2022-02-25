@@ -58,22 +58,22 @@ namespace ProtocolGenerator.Protocol
         /// <summary>
         /// 请求
         /// </summary>
-        public ObjectDef Request { get; private set; } = new();
+        public ObjectDef Request { get; private set; } = new ObjectDef();
 
         /// <summary>
         /// 响应
         /// </summary>
-        public ObjectDef Response { get; private set; } = new();
+        public ObjectDef Response { get; private set; } = new ObjectDef();
 
         /// <summary>
         /// Websock Adapter
         /// </summary>
-        public WsAdapterDef? WsAdapter { get; private set; }
+        public WsAdapterDef WsAdapter { get; private set; }
 
         /// <summary>
         /// Http Adapter
         /// </summary>
-        public HttpAdapterDef? HttpAdapter { get; private set; }
+        public HttpAdapterDef HttpAdapter { get; private set; }
 
         /// <summary>
         /// 名称
@@ -95,7 +95,7 @@ namespace ProtocolGenerator.Protocol
         /// </summary>
         /// <param name="version"></param>
         /// <param name="xml"></param>
-        public override void FromXml(Version version, XmlElement? xml)
+        public override void FromXml(Version version, XmlElement xml)
         {
             if (xml == null)
                 return;
@@ -103,23 +103,23 @@ namespace ProtocolGenerator.Protocol
             Name = xml.GetAttribute("name");
             Description = xml.GetAttribute("desc");
 
-            Request.LoadFieldDefs(xml["request"]!.ChildNodes);
-            Response.LoadFieldDefs(xml["response"]!.ChildNodes);
+            Request.LoadFieldDefs(xml["request"].ChildNodes);
+            Response.LoadFieldDefs(xml["response"].ChildNodes);
 
-            foreach (XmlElement element in xml["adapter"]!)
+            foreach (XmlElement element in xml["adapter"])
             {
                 switch (element.Name)
                 {
                     case "http":
                         var method = (HttpAdapterMethod)Enum.Parse(typeof(HttpAdapterMethod), element.GetAttribute("method"));
-                        HttpAdapter = new(
+                        HttpAdapter = new HttpAdapterDef(
                             element.GetAttributeValue("cmd"),
                             element.GetAttributeValue("desc", true),
                             element.GetAttributeValue("content", true),
                             method);
                         break;
                     case "ws":
-                        WsAdapter = new(
+                        WsAdapter = new WsAdapterDef(
                             element.GetAttributeValue("cmd"),
                             element.GetAttributeValue("desc", true));
                         break;

@@ -14,17 +14,18 @@ namespace ProtocolGenerator.Module
         /// <summary>
         /// 内部类型
         /// </summary>
-        public List<ClassDef> Classes { get; set; } = new();
+        public List<ClassDef> Classes { get; set; } = new List<ClassDef>();
 
         /// <summary>
         /// 静态字符串
         /// </summary>
-        public Dictionary<string, (string value, string description)> ConstString { get; private set; } = new();
+        public Dictionary<string, (string value, string description)> ConstString { get; private set; } 
+            = new Dictionary<string, (string value, string description)>();
 
         /// <summary>
         /// 基类
         /// </summary>
-        public ClassDef? Base { get; set; }
+        public ClassDef Base { get; set; }
 
         /// <summary>
         /// 类名
@@ -44,9 +45,10 @@ namespace ProtocolGenerator.Module
         /// <summary>
         /// 成员定义
         /// </summary>
-        public Dictionary<string, MemberDef> Members { get; private set; } = new();
+        public Dictionary<string, MemberDef> Members { get; private set; } 
+            = new Dictionary<string, MemberDef>();
 
-        public ClassDef(string name, string description, ClassDef? baseClass = null)
+        public ClassDef(string name, string description, ClassDef baseClass = null)
         {
             Name = name;
             Description = description;

@@ -33,14 +33,14 @@ namespace ProtocolGenerator.Module
         /// <summary>
         /// 成员类型引用，只有当 Type 为 Object 时才不为空
         /// </summary>
-        public ClassDef? Reference { get; private set; }
+        public ClassDef Reference { get; private set; }
 
         /// <summary>
         /// 成员描述
         /// </summary>
         public string Description { get; private set; }
 
-        public MemberDef(string name, string description, MemberType type, ClassDef? classDef = null)
+        public MemberDef(string name, string description, MemberType type, ClassDef classDef = null)
         {
             Name = name;
             Description = description;
@@ -51,9 +51,9 @@ namespace ProtocolGenerator.Module
         public override string ToString()
         {
             if (Type == MemberType.Object)
-                return $"{Reference!.Name} {Name}; // {Description}";
+                return $"{Reference.Name} {Name}; // {Description}";
             if (Type == MemberType.ObjectList)
-                return $"List<{Reference!.Name}> {Name}; // {Description}";
+                return $"List<{Reference.Name}> {Name}; // {Description}";
 
             switch (Type)
             {
@@ -66,7 +66,8 @@ namespace ProtocolGenerator.Module
                 case MemberType.IntList:
                 case MemberType.LongList:
                 case MemberType.StringList:
-                    return $"List<{Type.ToString()[0..^4]}> {Name}; // {Description}";
+                    var typeStr = Type.ToString();
+                    return $"List<{typeStr.Substring(0, typeStr.Length - 4)}> {Name}; // {Description}";
                 default:
                     throw new NotImplementedException($"Unknown type {Type}");
             }

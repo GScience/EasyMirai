@@ -19,9 +19,9 @@ namespace ProtocolGenerator
     {
         public const string ProtocolNamespace = "ProtocolGenerator.Protocol.";
 
-        public List<ObjectDef> Objects { get; set; } = new();
-        public List<ApiDef> Apis { get; set; } = new();
-        public List<MessageDef> Messages { get; set; } = new();
+        public List<ObjectDef> Objects { get; set; } = new List<ObjectDef>();
+        public List<ApiDef> Apis { get; set; } = new List<ApiDef>();
+        public List<MessageDef> Messages { get; set; } = new List<MessageDef>();
 
         public MiraiProtocol()
         {
@@ -67,7 +67,7 @@ namespace ProtocolGenerator
 
             foreach (var resourcePath in resourcePaths)
             {
-                var resourcePathWithoutNamespace = resourcePath[protocolNamespace.Length..];
+                var resourcePathWithoutNamespace = resourcePath.Substring(protocolNamespace.Length);
 
                 var args = resourcePathWithoutNamespace.Split('.');
 
@@ -85,7 +85,7 @@ namespace ProtocolGenerator
                 if (args[0].StartsWith("v"))
                 {
                     // 获取版本号字符串
-                    var versionName = args[0][1..].Replace('_', '.');
+                    var versionName = args[0].Substring(1).Replace('_', '.');
                     version = Version.Parse(versionName);
                 }
                 else if (args[0] == "Common")
@@ -123,10 +123,12 @@ namespace ProtocolGenerator
         private static XmlDocument LoadXmlDocument(string path)
         {
             var document = new XmlDocument();
-            using var stream = typeof(MiraiProtocol).Assembly.GetManifestResourceStream(path);
-            if (stream == null)
-                throw new FileNotFoundException(path);
-            document.Load(stream);
+            using (var stream = typeof(MiraiProtocol).Assembly.GetManifestResourceStream(path))
+            {
+                if (stream == null)
+                    throw new Exception($"{path} not found");
+                document.Load(stream);
+            }
             return document;
         }
 

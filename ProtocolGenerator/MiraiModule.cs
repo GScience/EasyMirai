@@ -22,9 +22,9 @@ namespace ProtocolGenerator
         /// <summary>
         /// 已经加载的所有对象
         /// </summary>
-        public Dictionary<ProtocolComponent, ClassDef> ClassTable = new();
+        public Dictionary<ProtocolComponent, ClassDef> ClassTable = new Dictionary<ProtocolComponent, ClassDef>();
 
-        public List<ClassDef> Classes { get; private set; } = new();
+        public List<ClassDef> Classes { get; private set; } = new List<ClassDef>();
         public ClassDef _wsAdapter { get; set; }
         public ClassDef _httpAdapter { get; set; }
 
@@ -143,7 +143,7 @@ namespace ProtocolGenerator
         /// <param name="objBase">基类</param>
         /// <param name="category">分类，用于代码生成器的选择</param>
         /// <returns></returns>
-        private ClassDef FromObjectDef(ObjectDef obj, ClassDef? objBase, string category)
+        private ClassDef FromObjectDef(ObjectDef obj, ClassDef objBase, string category)
         {
             if (ClassTable.ContainsKey(obj))
                 return ClassTable[obj];
@@ -155,13 +155,23 @@ namespace ProtocolGenerator
             // 加载值成员
             foreach (var valueDef in obj.Values)
             {
-                var memberType = valueDef.Value.valDef switch
+                MemberType memberType;
+                switch (valueDef.Value.valDef)
                 {
-                    ValDef.Boolean => MemberType.Boolean,
-                    ValDef.Int => MemberType.Int,
-                    ValDef.Long => MemberType.Long,
-                    ValDef.String => MemberType.String,
-                    _ => throw new NotImplementedException(),
+                    case ValDef.Boolean:
+                        memberType = MemberType.Boolean;
+                        break;
+                    case ValDef.Int:
+                        memberType = MemberType.Int;
+                        break;
+                    case ValDef.Long:
+                        memberType = MemberType.Long;
+                        break;
+                    case ValDef.String:
+                        memberType = MemberType.String;
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 };
 
                 var member = new MemberDef(valueDef.Key, valueDef.Value.description, memberType);
@@ -199,13 +209,23 @@ namespace ProtocolGenerator
             // 加载值列表
             foreach (var valueDef in obj.ValueList)
             {
-                var memberType = valueDef.Value.valDef switch
+                MemberType memberType;
+                switch (valueDef.Value.valDef)
                 {
-                    ValDef.Boolean => MemberType.BooleanList,
-                    ValDef.Int => MemberType.IntList,
-                    ValDef.Long => MemberType.LongList,
-                    ValDef.String => MemberType.StringList,
-                    _ => throw new NotImplementedException(),
+                    case ValDef.Boolean:
+                        memberType = MemberType.Boolean;
+                        break;
+                    case ValDef.Int:
+                        memberType = MemberType.Int;
+                        break;
+                    case ValDef.Long:
+                        memberType = MemberType.Long;
+                        break;
+                    case ValDef.String:
+                        memberType = MemberType.String;
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 };
 
                 var member = new MemberDef(valueDef.Key, valueDef.Value.description, memberType);
