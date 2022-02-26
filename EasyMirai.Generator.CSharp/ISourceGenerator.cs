@@ -25,6 +25,11 @@ namespace EasyMirai.Generator.CSharp
         void PreProcessing(ClassDef classDef);
 
         /// <summary>
+        /// 后处理
+        /// </summary>
+        void PostProcessing();
+
+        /// <summary>
         /// 获取类型路径
         /// </summary>
         /// <returns></returns>

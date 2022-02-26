@@ -15,7 +15,7 @@ using System.Text.Json.Serialization;
 
 namespace {namespaceDef}.Message
 {{
-    public interface {classDef.Name}
+    public class {classDef.Name}
     {{
     
     }}

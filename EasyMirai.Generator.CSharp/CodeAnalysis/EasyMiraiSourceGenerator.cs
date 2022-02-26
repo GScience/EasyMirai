@@ -14,7 +14,7 @@ namespace EasyMirai.Generator.CSharp.CodeAnalysis
         {
             var protocol = new MiraiProtocol();
             var module = new MiraiModule(protocol);
-            var source = new MiraiSource(module, "EasyMirai");
+            var source = new MiraiSource(module, "EasyMirai.CSharp");
 
             foreach (var src in source.SourceCodeDict)
                 context.AddSource(src.Key, src.Value);

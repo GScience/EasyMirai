@@ -16,6 +16,56 @@ namespace EasyMirai.Generator.CSharp.Generator
         }
 
         /// <summary>
+        /// 生成成员源码
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public static string GetMemberSource(MemberDef memberDef, bool useLowerCamel = false)
+        {
+            var memberTypeName = "";
+
+            switch (memberDef.Type)
+            {
+                case MemberType.String:
+                    memberTypeName = "string";
+                    break;
+                case MemberType.StringList:
+                    memberTypeName = $"{List}<string>";
+                    break;
+                case MemberType.Boolean:
+                    memberTypeName = "bool";
+                    break;
+                case MemberType.BooleanList:
+                    memberTypeName = $"{List}<bool>";
+                    break;
+                case MemberType.Int:
+                    memberTypeName = $"int";
+                    break;
+                case MemberType.IntList:
+                    memberTypeName = $"{List}<int>";
+                    break;
+                case MemberType.Long:
+                    memberTypeName = "long";
+                    break;
+                case MemberType.LongList:
+                    memberTypeName = $"{List}<long>";
+                    break;
+                case MemberType.Object:
+                    memberTypeName = memberDef.Reference.Name;
+                    break;
+                case MemberType.ObjectList:
+                    memberTypeName = $"{List}<{memberDef.Reference.Name}>";
+                    break;
+                default:
+                    throw new NotImplementedException($"Unknown type {memberDef.Type}");
+            }
+
+            if (useLowerCamel)
+                return $"{memberTypeName} {FormatNameToLowerCamel(memberDef.Name)}";
+            return $"{memberTypeName} {FormatNameToUpperCamel(memberDef.Name)}";
+        }
+
+        /// <summary>
         /// 生成对象源码，忽略 namespace
         /// </summary>
         /// <param name="classDef"></param>
@@ -36,51 +86,13 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
-                var memberTypeName = "";
-
-                switch (memberDef.Type)
-                {
-                    case MemberType.String:
-                        memberTypeName = "string";
-                        break;
-                    case MemberType.StringList:
-                        memberTypeName = $"{List}<string>";
-                        break;
-                    case MemberType.Boolean:
-                        memberTypeName = "bool";
-                        break;
-                    case MemberType.BooleanList:
-                        memberTypeName = $"{List}<bool>";
-                        break;
-                    case MemberType.Int:
-                        memberTypeName = $"int";
-                        break;
-                    case MemberType.IntList:
-                        memberTypeName = $"{List}<int>";
-                        break;
-                    case MemberType.Long:
-                        memberTypeName = "long";
-                        break;
-                    case MemberType.LongList:
-                        memberTypeName = $"{List}<long>";
-                        break;
-                    case MemberType.Object:
-                        memberTypeName = memberDef.Reference.Name;
-                        break;
-                    case MemberType.ObjectList:
-                        memberTypeName = $"{List}<{memberDef.Reference.Name}>";
-                        break;
-                    default:
-                        throw new NotImplementedException($"Unknown type {memberDef.Type}");
-                }
 
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
                 var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
-
-                return 
+                return
                     $"{newLine}\t{memberComment}" +
                     $"{newLine}\t{jsonPropertyName}" +
-                    $"{newLine}\tpublic {memberTypeName} {FormatName(memberDef.Name)} {{ get; set; }}";
+                    $"{newLine}\tpublic {GetMemberSource(memberDef)} {{ get; set; }}";
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
@@ -123,6 +135,11 @@ namespace {namespaceDef}
         public override string GetClassDir(ClassDef classDef)
         {
             return "";
+        }
+
+        public override void PostProcessing()
+        {
+
         }
     }
 }

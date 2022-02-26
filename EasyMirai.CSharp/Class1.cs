@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyMirai.CSharp.Adapter;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace EasyMirai.CSharp
     {
         public void test()
         {
+            WsAdapter test = new();
+
             return;
         }
     }

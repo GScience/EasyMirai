@@ -38,5 +38,10 @@ namespace {namespaceDef}.Api
         {
             return "Api";
         }
+
+        public override void PostProcessing()
+        {
+            
+        }
     }
 }

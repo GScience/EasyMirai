@@ -22,7 +22,7 @@ namespace EasyMirai.Generator.CSharp.Generator
 
         public virtual void PreProcessing(ClassDef classDef)
         {
-            classDef.Name = FormatName(classDef.Name);
+            classDef.Name = FormatNameToUpperCamel(classDef.Name);
         }
 
         /// <summary>
@@ -30,11 +30,20 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// </summary>
         /// <param name="className"></param>
         /// <returns></returns>
-        protected static string FormatName(string className)
+        protected static string FormatNameToUpperCamel(string className)
         {
             return className.Remove(1).ToUpper() + className.Substring(1);
         }
+        protected static string FormatNameToLowerCamel(string className)
+        {
+            return className.Remove(1).ToLower() + className.Substring(1);
+        }
 
         public abstract string GetClassDir(ClassDef classDef);
+
+        public virtual void PostProcessing()
+        {
+
+        }
     }
 }
