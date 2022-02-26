@@ -17,7 +17,17 @@ namespace ProtocolGenerator
         /// <summary>
         /// 仅生成期间使用 Tag
         /// </summary>
-        private const string TagOnlyForGenerate = "[OnlyForGenerating] ";
+        public const string TagOnlyForGenerate = "[OnlyForGenerating] ";
+
+        public const string CategoryAdapterWs = "Adapter.Ws"; 
+        public const string CategoryAdapterHttp = "Adapter.Http";
+        public const string CategoryMessage = "Message";
+        public const string CategoryIMessage = "Interface.Message";
+        public const string CategoryIFunctione = "Interface.Function";
+        public const string CategoryApi = "Api";
+        public const string CategoryApiRequest = "Api.Request";
+        public const string CategoryApiResponse = "Api.Response";
+        public const string CategoryObject = "Object";
 
         /// <summary>
         /// 已经加载的所有对象
@@ -25,8 +35,8 @@ namespace ProtocolGenerator
         public Dictionary<ProtocolComponent, ClassDef> ClassTable = new Dictionary<ProtocolComponent, ClassDef>();
 
         public List<ClassDef> Classes { get; private set; } = new List<ClassDef>();
-        public ClassDef _wsAdapter { get; set; }
-        public ClassDef _httpAdapter { get; set; }
+        private ClassDef _wsAdapter { get; set; }
+        private ClassDef _httpAdapter { get; set; }
 
         private ClassDef _messageBaseDef;
         private ClassDef _functionDef;
@@ -34,17 +44,17 @@ namespace ProtocolGenerator
         public MiraiModule(MiraiProtocol protocol)
         {
             _wsAdapter = AddInternalClass(protocol, "WsAdapter", "Websocket Adapter");
-            _wsAdapter.Category = "Adapter.Ws";
+            _wsAdapter.Category = CategoryAdapterWs;
             _httpAdapter = AddInternalClass(protocol, "HttpAdapter", "Http Adapter");
-            _httpAdapter.Category = "Adapter.Http";
+            _httpAdapter.Category = CategoryAdapterHttp;
 
             _messageBaseDef = AddInternalClass(protocol, "Message", "通用消息接口");
             _functionDef = AddInternalClass(protocol, "Function", "函数");
 
             _messageBaseDef.Name = "IMessage";
-            _messageBaseDef.Category = "Interface.Message";
+            _messageBaseDef.Category = CategoryIMessage;
             _functionDef.Name = "IFunction";
-            _functionDef.Category = "Interface.Function";
+            _functionDef.Category = CategoryIFunctione;
 
             foreach (var obj in protocol.Objects)
                 Classes.Add(FromObjectDef(obj));
@@ -71,11 +81,11 @@ namespace ProtocolGenerator
                 return ClassTable[apiDef];
 
             var classDef = new ClassDef(apiDef.Name, apiDef.Description, null);
-            classDef.Category = "Api";
+            classDef.Category = CategoryApi;
 
-            var requestClass = FromObjectDef(apiDef.Request, null, "Api.Request");
+            var requestClass = FromObjectDef(apiDef.Request, null, CategoryApiRequest);
             requestClass.Name = "Request";
-            var responseClass = FromObjectDef(apiDef.Response, null, "Api.Response");
+            var responseClass = FromObjectDef(apiDef.Response, null, CategoryApiResponse);
             responseClass.Name = "Response";
 
             if (apiDef.HttpAdapter != null)
@@ -121,7 +131,7 @@ namespace ProtocolGenerator
         /// <returns></returns>
         private ClassDef FromMessageDef(MessageDef msg)
         {
-            var classDef = FromObjectDef(msg, _messageBaseDef, "Message");
+            var classDef = FromObjectDef(msg, _messageBaseDef, CategoryMessage);
             classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "消息类型");
             return classDef;
         }
@@ -133,7 +143,7 @@ namespace ProtocolGenerator
         /// <returns></returns>
         private ClassDef FromObjectDef(ObjectDef obj)
         {
-            return FromObjectDef(obj, null, "Object");
+            return FromObjectDef(obj, null, CategoryObject);
         }
 
         /// <summary>
@@ -213,16 +223,16 @@ namespace ProtocolGenerator
                 switch (valueDef.Value.valDef)
                 {
                     case ValDef.Boolean:
-                        memberType = MemberType.Boolean;
+                        memberType = MemberType.BooleanList;
                         break;
                     case ValDef.Int:
-                        memberType = MemberType.Int;
+                        memberType = MemberType.IntList;
                         break;
                     case ValDef.Long:
-                        memberType = MemberType.Long;
+                        memberType = MemberType.LongList;
                         break;
                     case ValDef.String:
-                        memberType = MemberType.String;
+                        memberType = MemberType.StringList;
                         break;
                     default:
                         throw new NotImplementedException();
@@ -235,7 +245,7 @@ namespace ProtocolGenerator
             // 加载对象成员列表
             foreach (var objDef in obj.ObjectList)
             {
-                var memberType = MemberType.Object;
+                var memberType = MemberType.ObjectList;
                 var typeDef = FromObjectDef(objDef.Value.objectDef);
 
                 // 给内部匿名对象一个名称

@@ -1,6 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ProtocolGenerator;
 using System;
+using System.Diagnostics;
 
 static class Program
 {
