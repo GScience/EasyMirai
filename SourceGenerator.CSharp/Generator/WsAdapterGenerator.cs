@@ -1,23 +1,25 @@
-﻿using ProtocolGenerator.Module;
+﻿using ProtocolGenerator;
+using ProtocolGenerator.Module;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SourceGenerator.CSharp.Generator
 {
-    internal class IMessageGenerator : GeneratorBase
+    internal class WsAdapterGenerator : GeneratorBase
     {
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
-            string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Message")}\n
+            string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Adapter")}
+
 using System;
 using System.Text.Json.Serialization;
 
-namespace {namespaceDef}.Message
+namespace {namespaceDef}.Adapter
 {{
-    public interface {classDef.Name}
+    public class WsAdapter
     {{
-    
+        
     }}
 }}
 ";
@@ -26,7 +28,7 @@ namespace {namespaceDef}.Message
 
         public override string GetClassDir(ClassDef classDef)
         {
-            return "Message";
+            return "Adapter";
         }
     }
 }

@@ -20,7 +20,7 @@ namespace SourceGenerator.CSharp.Generator
  // Generate at {DateTime.Now}";
         }
 
-        public void PreProcessing(ClassDef classDef)
+        public virtual void PreProcessing(ClassDef classDef)
         {
             classDef.Name = FormatName(classDef.Name);
         }

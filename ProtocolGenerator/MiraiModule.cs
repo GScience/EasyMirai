@@ -85,8 +85,10 @@ namespace ProtocolGenerator
 
             var requestClass = FromObjectDef(apiDef.Request, null, CategoryApiRequest);
             requestClass.Name = "Request";
+            requestClass.Description = apiDef.Name + ".Request";
             var responseClass = FromObjectDef(apiDef.Response, null, CategoryApiResponse);
             responseClass.Name = "Response";
+            responseClass.Description = apiDef.Name + ".Response";
 
             if (apiDef.HttpAdapter != null)
             {
@@ -196,6 +198,7 @@ namespace ProtocolGenerator
                
                 // 给内部匿名对象一个名称
                 typeDef.Name = obj.Name + objDef.Key.FirstToUpper();
+                typeDef.Description = objDef.Value.description;
                 classDef.Classes.Add(typeDef);
 
                 var member = new MemberDef(objDef.Key, objDef.Value.description, memberType, typeDef);
@@ -250,6 +253,7 @@ namespace ProtocolGenerator
 
                 // 给内部匿名对象一个名称
                 typeDef.Name = obj.Name + objDef.Key.FirstToUpper();
+                typeDef.Description = objDef.Value.description;
                 classDef.Classes.Add(typeDef);
 
                 var member = new MemberDef(objDef.Key, objDef.Value.description, memberType, typeDef);

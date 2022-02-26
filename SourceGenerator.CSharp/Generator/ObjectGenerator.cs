@@ -8,14 +8,30 @@ namespace SourceGenerator.CSharp.Generator
 {
     internal class ObjectGenerator : GeneratorBase
     {
+        public static string List = "IEnumerable";
+
+        public override void PreProcessing(ClassDef classDef)
+        {
+            base.PreProcessing(classDef);
+        }
+
         /// <summary>
         /// 生成对象源码，忽略 namespace
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        public string GenObjectSource(ClassDef classDef, int depth = 0)
+        public static string GenObjectSource(ClassDef classDef, int depth = 0)
         {
             var newLine = Environment.NewLine + new string('\t', depth);
+
+            foreach (var innerClass in classDef.Classes)
+                innerClass.Name = "Inner" + innerClass.Name;
+
+            // 内部类型定义
+            var innerClassDefs = classDef.Classes.Select(innerClassDef =>
+            {
+                return GenObjectSource(innerClassDef, depth + 1);
+            });
 
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
@@ -28,31 +44,31 @@ namespace SourceGenerator.CSharp.Generator
                         memberTypeName = "string";
                         break;
                     case MemberType.StringList:
-                        memberTypeName = "List<string>";
+                        memberTypeName = $"{List}<string>";
                         break;
                     case MemberType.Boolean:
                         memberTypeName = "bool";
                         break;
                     case MemberType.BooleanList:
-                        memberTypeName = "List<bool>";
+                        memberTypeName = $"{List}<bool>";
                         break;
                     case MemberType.Int:
-                        memberTypeName = "int";
+                        memberTypeName = $"int";
                         break;
                     case MemberType.IntList:
-                        memberTypeName = "List<int>";
+                        memberTypeName = $"{List}<int>";
                         break;
                     case MemberType.Long:
                         memberTypeName = "long";
                         break;
                     case MemberType.LongList:
-                        memberTypeName = "List<long>";
+                        memberTypeName = $"{List}<long>";
                         break;
                     case MemberType.Object:
                         memberTypeName = memberDef.Reference.Name;
                         break;
                     case MemberType.ObjectList:
-                        memberTypeName = $"List<{memberDef.Reference.Name}>";
+                        memberTypeName = $"{List}<{memberDef.Reference.Name}>";
                         break;
                     default:
                         throw new NotImplementedException($"Unknown type {memberDef.Type}");
@@ -65,12 +81,6 @@ namespace SourceGenerator.CSharp.Generator
                     $"{newLine}\t{memberComment}" +
                     $"{newLine}\t{jsonPropertyName}" +
                     $"{newLine}\tpublic {memberTypeName} {FormatName(memberDef.Name)} {{ get; set; }}";
-            });
-
-            // 内部类型定义
-            var innerClassDefs = classDef.Classes.Select(innerClassDef =>
-            {
-                return GenObjectSource(innerClassDef, depth + 1);
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
@@ -100,6 +110,7 @@ namespace SourceGenerator.CSharp.Generator
             string source = $@"{base.GenerateFrom(classDef, namespaceDef)}
 
 using System;
+using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace {namespaceDef}

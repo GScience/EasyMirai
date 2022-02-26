@@ -15,6 +15,7 @@ namespace SourceGenerator.CSharp
         {
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryObject] = new ObjectGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryMessage] = new MessageGenerator();
+            GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryApi] = new ApiGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryIMessage] = new IMessageGenerator();
 
             foreach (var classDef in module.Classes)
