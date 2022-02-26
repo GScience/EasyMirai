@@ -27,8 +27,8 @@ namespace {namespaceDef}.Api
 {{
     public class {classDef.Name}
     {{
-{ObjectGenerator.GenObjectSource(classDef.Classes[0], 2)}
-{ObjectGenerator.GenObjectSource(classDef.Classes[1], 2)}
+{ObjectGenerator.GenClassSource(classDef.Classes[0], 2)}
+{ObjectGenerator.GenClassSource(classDef.Classes[1], 2)}
     }}
 }}
 ";

@@ -20,7 +20,7 @@ namespace SourceGenerator.CSharp.Generator
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        public static string GenObjectSource(ClassDef classDef, int depth = 0)
+        public static string GenClassSource(ClassDef classDef, int depth = 0)
         {
             var newLine = Environment.NewLine + new string('\t', depth);
 
@@ -30,7 +30,7 @@ namespace SourceGenerator.CSharp.Generator
             // 内部类型定义
             var innerClassDefs = classDef.Classes.Select(innerClassDef =>
             {
-                return GenObjectSource(innerClassDef, depth + 1);
+                return GenClassSource(innerClassDef, depth + 1);
             });
 
             // 成员定义
@@ -114,7 +114,7 @@ using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace {namespaceDef}
-{{{GenObjectSource(classDef, 1)}
+{{{GenClassSource(classDef, 1)}
 }}
 ";
             return source;
