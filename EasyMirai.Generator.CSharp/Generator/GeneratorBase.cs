@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using EasyMirai.Generator.CSharp.Extensions;
 
 namespace EasyMirai.Generator.CSharp.Generator
 {
@@ -22,21 +23,7 @@ namespace EasyMirai.Generator.CSharp.Generator
 
         public virtual void PreProcessing(ClassDef classDef)
         {
-            classDef.Name = FormatNameToUpperCamel(classDef.Name);
-        }
-
-        /// <summary>
-        /// 格式化名称
-        /// </summary>
-        /// <param name="className"></param>
-        /// <returns></returns>
-        internal static string FormatNameToUpperCamel(string className)
-        {
-            return className.Remove(1).ToUpper() + className.Substring(1);
-        }
-        internal static string FormatNameToLowerCamel(string className)
-        {
-            return className.Remove(1).ToLower() + className.Substring(1);
+            classDef.Name = classDef.Name.ToUpperCamel();
         }
 
         public abstract string GetClassDir(ClassDef classDef);

@@ -35,8 +35,14 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 列表查找IFunction命令
             var apiFuncDefs = ApiList.Select(api =>
             {
+                var comment = $@"
+        /// <summary>
+        /// {api.apiDef.Description}
+        /// </summary>
+        /// <returns>Response</returns>";
+
                 // 直接传递完整Request
-                var apiWithRequestObject = $@"
+                var apiWithRequestObject = $@"{comment}
         public Api.{api.apiDef.Name}.Response {api.name}(Api.{api.apiDef.Name}.Request request)
         {{
             Api.{api.apiDef.Name}.Response response = new();
@@ -52,7 +58,8 @@ namespace EasyMirai.Generator.CSharp.Generator
                 {requestClassDef.ExpandCtor(4)}
             }};";
 
-                var apiExpandArgs = $@"
+                var apiExpandArgs = $@"{comment}
+        {requestClassDef.ExpandParamComment(2)}
         public Api.{api.apiDef.Name}.Response {api.name}({requestClassDef.ExpandArgs()})
         {{
             {requestConstruct}

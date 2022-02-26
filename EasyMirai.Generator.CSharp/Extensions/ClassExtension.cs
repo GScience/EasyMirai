@@ -21,6 +21,22 @@ namespace EasyMirai.Generator.CSharp.Extensions
         }
 
         /// <summary>
+        /// 生成参数注释
+        /// </summary>
+        /// <param name="classDef"></param>
+        /// <returns></returns>
+        public static string ExpandParamComment(this ClassDef classDef, int depth = 0)
+        {
+            var members = classDef.Members.Values;
+            var newLine = Environment.NewLine + new string('\t', depth);
+            return string.Join(
+                newLine, 
+                members.Select(
+                    memberDef => $"/// <param name=\"{memberDef.Name}\">{memberDef.Description}</param>"
+                    ));
+        }
+
+        /// <summary>
         /// 展开构造
         /// </summary>
         /// <param name="classDef"></param>
@@ -33,8 +49,8 @@ namespace EasyMirai.Generator.CSharp.Extensions
                 string.Join(
                     $",{newLine}", 
                     members.Select(memberDef => 
-                        $"{GeneratorBase.FormatNameToUpperCamel(memberDef.Name)} = {GeneratorBase.FormatNameToLowerCamel(memberDef.Name)}"
-                    ));
+                        $"{memberDef.Name.ToUpperCamel()} = {memberDef.Name.ToLowerCamel()}"
+                        ));
         }
     }
 }

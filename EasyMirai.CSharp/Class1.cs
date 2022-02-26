@@ -1,4 +1,5 @@
 ﻿using EasyMirai.CSharp.Adapter;
+using EasyMirai.CSharp.Message;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace EasyMirai.CSharp
         public void test()
         {
             WsAdapter test = new();
-
+            test.SendFriendMessage("123", 123, new List<IMessage>());
             return;
         }
     }

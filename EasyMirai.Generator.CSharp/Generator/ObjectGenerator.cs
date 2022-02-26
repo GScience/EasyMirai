@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using EasyMirai.Generator.CSharp.Extensions;
 
 namespace EasyMirai.Generator.CSharp.Generator
 {
@@ -61,8 +62,8 @@ namespace EasyMirai.Generator.CSharp.Generator
             }
 
             if (useLowerCamel)
-                return $"{memberTypeName} {FormatNameToLowerCamel(memberDef.Name)}";
-            return $"{memberTypeName} {FormatNameToUpperCamel(memberDef.Name)}";
+                return $"{memberTypeName} {memberDef.Name.ToLowerCamel()}";
+            return $"{memberTypeName} {memberDef.Name.ToUpperCamel()}";
         }
 
         /// <summary>
