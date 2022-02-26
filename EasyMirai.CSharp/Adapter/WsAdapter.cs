@@ -15,10 +15,16 @@ namespace EasyMirai.CSharp.Adapter
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
         /// <param name="request"></param>
-        /// <param name="response"></param>
-        partial void Send<TRequest, TResponse>(TRequest request, string cmd, TResponse response)
+        private async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd)
         {
+            var requestJson = JsonSerializer.Serialize(request);
 
+            using var ms = new MemoryStream(Encoding.UTF8.GetBytes("{\"a\":1}"));
+
+            var response = await JsonSerializer.DeserializeAsync<TResponse>(ms);
+            if (response == null)
+                throw new Exception("Failed to deserialize object");
+            return response;
         }
     }
 }

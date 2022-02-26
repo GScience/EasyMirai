@@ -14,26 +14,35 @@ namespace EasyMirai.Generator.CSharp.Extensions
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        public static string ExpandArgs(this ClassDef classDef)
+        public static string ExpandArgs(this ClassDef classDef, string[] ignoreArgs)
         {
             var members = classDef.Members.Values;
-            return string.Join(", ", members.Select(memberDef => ObjectGenerator.GetMemberSource(memberDef, true)));
+            return string.Join(", ", 
+                members
+                    .OrderBy(m => m.Type)
+                    .ThenBy(m => m.Name)
+                    .Where(memberDef => !ignoreArgs.Contains(memberDef.Name.ToLowerCamel()))
+                    .Select(memberDef => ObjectGenerator.GetMemberSource(memberDef, true)));
         }
 
         /// <summary>
         /// 生成参数注释
         /// </summary>
         /// <param name="classDef"></param>
+        /// <param name="ignoreArgs">忽略的参数</param>
+        /// <param name="depth">深度/param>
         /// <returns></returns>
-        public static string ExpandParamComment(this ClassDef classDef, int depth = 0)
+        public static string ExpandParamComment(this ClassDef classDef, string[] ignoreArgs, int depth = 0)
         {
             var members = classDef.Members.Values;
             var newLine = Environment.NewLine + new string('\t', depth);
             return string.Join(
                 newLine, 
-                members.Select(
-                    memberDef => $"/// <param name=\"{memberDef.Name}\">{memberDef.Description}</param>"
-                    ));
+                members
+                    .Where(memberDef => !ignoreArgs.Contains(memberDef.Name.ToLowerCamel()))
+                    .Select(
+                        memberDef => $"/// <param name=\"{memberDef.Name.ToLowerCamel()}\">{memberDef.Description}</param>"
+                        ));
         }
 
         /// <summary>

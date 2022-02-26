@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMirai.CSharp", "EasyMir
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyMirai.Generator.CSharp", "EasyMirai.Generator.CSharp\EasyMirai.Generator.CSharp.csproj", "{242CDB5F-0CFA-467E-90E8-0D555CBC5E15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyMirai.CSharp.Example", "EasyMirai.CSharp.Example\EasyMirai.CSharp.Example.csproj", "{CA2686DB-7CA7-4FCC-BAD0-EAF87C2A33A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{242CDB5F-0CFA-467E-90E8-0D555CBC5E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{242CDB5F-0CFA-467E-90E8-0D555CBC5E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{242CDB5F-0CFA-467E-90E8-0D555CBC5E15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA2686DB-7CA7-4FCC-BAD0-EAF87C2A33A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA2686DB-7CA7-4FCC-BAD0-EAF87C2A33A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA2686DB-7CA7-4FCC-BAD0-EAF87C2A33A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA2686DB-7CA7-4FCC-BAD0-EAF87C2A33A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

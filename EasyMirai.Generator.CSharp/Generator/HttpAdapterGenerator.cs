@@ -36,36 +36,39 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 列表查找IFunction命令
             var apiFuncDefs = ApiList.Select(api =>
             {
-                var comment = $@"
+                var requestClassDef = api.apiDef.Classes
+                        .Where(c => c.Name == "Request").FirstOrDefault();
+
+                var commonComment = $@"
         /// <summary>
         /// {api.apiDef.Description}
         /// </summary>
         /// <returns>Response</returns>";
         
                 // 直接传递完整Request
-                var apiWithRequestObject = $@"{comment}
-        public Api.{api.apiDef.Name}.Response {api.name}(Api.{api.apiDef.Name}.Request request)
+                var apiWithRequestObject = $@"{commonComment}
+        /// <remarks>
+        /// 需要手动对 SessionKey 成员赋值
+        /// </remarks>
+        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async(Api.{api.apiDef.Name}.Request request)
         {{
-            Api.{api.apiDef.Name}.Response response = new();
-            Send(request, {"\""}{api.cmd}{"\""}, {"\""}{api.method}{"\""}, {"\""}{api.contentType}{"\""}, response); 
-            return response;
+            return await SendAsync<Api.{api.apiDef.Name}.Request, Api.{api.apiDef.Name}.Response>(
+                request, ""{api.cmd}"", ""{api.method}"", ""{api.contentType}""); 
         }}";
 
-                var requestClassDef = api.apiDef.Classes
-                        .Where(c => c.Name == "Request").FirstOrDefault();
-
-                // 构造请求
-                var requestConstruct = $@"Api.{api.apiDef.Name}.Request request = new()
+                // 拆开参数逐个输出
+                var apiExpandArgs = $@"{commonComment}
+        {requestClassDef.ExpandParamComment(new[] { "sessionKey" }, 2)}
+        /// <remarks>
+        /// 自动处理 SessionKey
+        /// </remarks>
+        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async({requestClassDef.ExpandArgs(new[] { "sessionKey" })})
+        {{
+            Api.{api.apiDef.Name}.Request request = new()
             {{
                 {requestClassDef.ExpandCtor(4)}
-            }};";
-
-                var apiExpandArgs = $@"{comment}
-        {requestClassDef.ExpandParamComment(2)}
-        public Api.{api.apiDef.Name}.Response {api.name}({requestClassDef.ExpandArgs()})
-        {{
-            {requestConstruct}
-            return {api.name}(request); 
+            }};
+            return await {api.name}Async(request); 
         }}";
                 return apiWithRequestObject + Environment.NewLine + apiExpandArgs;
             });
@@ -81,7 +84,10 @@ namespace {namespaceDef}.Adapter
 {{
     public partial class {classDef.Name}
     {{
-        partial void Send<TRequest, TResponse>(TRequest request, string cmd, string method, string contentType, TResponse response);
+        /// <summary>
+        /// Session Key
+        /// </summary>
+        public string sessionKey = """";
 {string.Join(Environment.NewLine, apiFuncDefs)}
     }}
 }}
