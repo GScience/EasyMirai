@@ -43,6 +43,11 @@ namespace EasyMirai.Generator.Module
         public string Description { get; set; } = "";
 
         /// <summary>
+        /// 最后变动版本
+        /// </summary>
+        public Version Version { get; set; }
+
+        /// <summary>
         /// 成员定义
         /// </summary>
         public Dictionary<string, MemberDef> Members { get; private set; } 

@@ -127,7 +127,10 @@ using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace {namespaceDef}
-{{{GenClassSource(classDef, 1)}
+{{
+    /// <remarks>
+    /// Version: {classDef.Version}
+    /// </remarks> { GenClassSource(classDef, 1) }
 }}
 ";
             return source;

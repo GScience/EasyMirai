@@ -48,7 +48,8 @@ namespace EasyMirai.Generator.CSharp.Generator
                 // 直接传递完整Request
                 var apiWithRequestObject = $@"{commonComment}
         /// <remarks>
-        /// 需要手动对 SessionKey 成员赋值
+        /// 需要手动对 SessionKey 成员赋值<br/>
+        /// Version: {api.apiDef.Version}
         /// </remarks>
         public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async(Api.{api.apiDef.Name}.Request request)
         {{
@@ -60,7 +61,8 @@ namespace EasyMirai.Generator.CSharp.Generator
                 var apiExpandArgs = $@"{commonComment}
         {requestClassDef.ExpandParamComment(new[] { "sessionKey" }, 2)}
         /// <remarks>
-        /// 自动处理 SessionKey
+        /// 自动处理 SessionKey<br/>
+        /// Version: {api.apiDef.Version}
         /// </remarks>
         public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async({requestClassDef.ExpandArgs(new[] { "sessionKey" })})
         {{
@@ -82,6 +84,9 @@ using {namespaceDef}.Message;
 
 namespace {namespaceDef}.Adapter
 {{
+    /// <summary>
+    /// Http Adapter
+    /// </summary>
     public partial class {classDef.Name}
     {{
         /// <summary>

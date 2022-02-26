@@ -81,6 +81,8 @@ namespace EasyMirai.Generator
                 return ClassTable[apiDef];
 
             var classDef = new ClassDef(apiDef.Name, apiDef.Description, null);
+
+            classDef.Version = apiDef.ProtocolVersion;
             classDef.Category = CategoryApi;
 
             var requestClass = FromObjectDef(apiDef.Request, null, CategoryApiRequest);
@@ -162,6 +164,7 @@ namespace EasyMirai.Generator
 
             var classDef = new ClassDef(obj.Name, obj.Description, objBase);
 
+            classDef.Version = obj.ProtocolVersion;
             classDef.Category = category;
 
             // 加载值成员

@@ -25,6 +25,12 @@ using {namespaceDef}.Message;
 
 namespace {namespaceDef}.Api
 {{
+    /// <summary>
+    /// {classDef.Description}
+    /// </summary>
+    /// <remarks>
+    /// Version: {classDef.Version}
+    /// </remarks>
     public class {classDef.Name}
     {{{ObjectGenerator.GenClassSource(classDef.Classes[0], 2)}
 {ObjectGenerator.GenClassSource(classDef.Classes[1], 2)}
