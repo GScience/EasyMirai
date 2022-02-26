@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using EasyMirai.Generator.CSharp.Extensions;
 
 namespace EasyMirai.Generator.CSharp.Generator
 {
@@ -44,30 +45,20 @@ namespace EasyMirai.Generator.CSharp.Generator
             return response;
         }}";
 
-                var members = api.apiDef.Classes
-                        .Where(c => c.Name == "Request")
-                        .First().Members.Values;
-
-                // 展开参数的调用
-                var expandArgs
-                    = members.Select(memberDef =>
-                        {
-                            return ObjectGenerator.GetMemberSource(memberDef, true);
-                        });
+                var requestClassDef = api.apiDef.Classes
+                        .Where(c => c.Name == "Request").FirstOrDefault();
 
                 // 构造请求
-                var requestConstruct = $@"Api.{api.apiDef.Name}.Request request = new
+                var requestConstruct = $@"Api.{api.apiDef.Name}.Request request = new()
             {{
-                {string.Join($",{Environment.NewLine}\t\t\t\t", members.Select(memberDef => $"{FormatNameToUpperCamel(memberDef.Name)} = {FormatNameToLowerCamel(memberDef.Name)}"))}
+                {requestClassDef.ExpandCtor(4)}
             }};";
 
                 var apiExpandArgs = $@"
-        public Api.{api.apiDef.Name}.Response {api.name}({string.Join(", ", expandArgs)})
+        public Api.{api.apiDef.Name}.Response {api.name}({requestClassDef.ExpandArgs()})
         {{
-            Api.{api.apiDef.Name}.Response response = new();
             {requestConstruct}
-            Send(request, {"\""}{api.cmd}{"\""}, {"\""}{api.method}{"\""}, {"\""}{api.contentType}{"\""}, response); 
-            return response;
+            return {api.name}(request); 
         }}";
                 return apiWithRequestObject + Environment.NewLine + apiExpandArgs;
             });
