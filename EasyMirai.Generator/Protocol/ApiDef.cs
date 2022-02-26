@@ -45,7 +45,10 @@ namespace EasyMirai.Generator.Protocol
         {
             Command = command;
             Description = description;
-            ContentType = string.IsNullOrEmpty(contentType) ? "application/json" : contentType;
+            if (method == HttpAdapterMethod.Get)
+                ContentType = "";
+            else
+                ContentType = string.IsNullOrEmpty(contentType) ? "application/json" : contentType;
             Method = method;
         }
     }
