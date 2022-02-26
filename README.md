@@ -3,11 +3,11 @@
 
 ### 项目结构
 
-#### ProtocolGenerator
+#### EasyMirai.Generator
 生成抽象的 mirai 协议模块并输出伪代码，所有协议定义均在该模块内的 Protocol 目录下的xml文件当中。
 
-#### SourceGenerator.CSharp
+#### EasyMirai.Generator.CSharp
 从协议模块生成 C# 的代码，支持源生成器功能。
 
-#### EasyMirai
+#### EasyMirai.CSharp
 简单的 C# mirai 库。
