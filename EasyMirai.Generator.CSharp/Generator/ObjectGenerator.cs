@@ -97,11 +97,9 @@ namespace EasyMirai.Generator.CSharp.Generator
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
-            var jsonSerializable = $"[JsonSerializable(typeof({classDef.Name}))]";
 
             string source =
                 $"{newLine}{classComment}" +
-                $"{newLine}{jsonSerializable}" +
                 $"{newLine}public class {classDef.Name}" +
                 $"{newLine}{{" +
                 // 成员定义
