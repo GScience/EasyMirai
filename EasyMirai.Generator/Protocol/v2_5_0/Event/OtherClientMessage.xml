@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="OtherClientMessage"
+	desc="其他客户端消息">
+	<ref name="sender" ref="Client" desc="消息发送者"/>
+	<refList name="messageChain" ref="Message" desc="消息数组"/>
+</event>

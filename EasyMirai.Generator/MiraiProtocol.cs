@@ -22,6 +22,7 @@ namespace EasyMirai.Generator
         public List<ObjectDef> Objects { get; set; } = new List<ObjectDef>();
         public List<ApiDef> Apis { get; set; } = new List<ApiDef>();
         public List<MessageDef> Messages { get; set; } = new List<MessageDef>();
+        public List<EventDef> Events { get; set; } = new List<EventDef>();
 
         public MiraiProtocol()
         {
@@ -64,6 +65,7 @@ namespace EasyMirai.Generator
             var ObjectPaths     = new VersioningPathDictionary();
             var ApiPaths        = new VersioningPathDictionary();
             var MessagePaths    = new VersioningPathDictionary();
+            var EventPaths = new VersioningPathDictionary();
 
             foreach (var resourcePath in resourcePaths)
             {
@@ -113,11 +115,15 @@ namespace EasyMirai.Generator
                     case "Message":
                         CompairVersionAndAdd(MessagePaths, protocolPath, version, resourcePath);
                         break;
+                    case "Event":
+                        CompairVersionAndAdd(EventPaths, protocolPath, version, resourcePath);
+                        break;
                 }
             }
             LoadObject(ObjectPaths.Values);
             LoadApi(ApiPaths.Values);
             LoadMessage(MessagePaths.Values);
+            LoadEvent(EventPaths.Values);
         }
 
         private static XmlDocument LoadXmlDocument(string path)
@@ -177,6 +183,22 @@ namespace EasyMirai.Generator
                 var mgs = new MessageDef();
                 mgs.FromXml(path.version, document.DocumentElement);
                 Messages.Add(mgs);
+            }
+        }
+
+        /// <summary>
+        /// 加载事件
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="resourcePath"></param>
+        private void LoadEvent(IEnumerableVersioningXmlPath resourcePaths)
+        {
+            foreach (var path in resourcePaths)
+            {
+                var document = LoadXmlDocument(path.path);
+                var eventDef = new EventDef();
+                eventDef.FromXml(path.version, document.DocumentElement);
+                Events.Add(eventDef);
             }
         }
     }

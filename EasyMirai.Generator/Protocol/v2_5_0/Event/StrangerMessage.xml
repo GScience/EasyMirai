@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="StrangerMessage"
+	desc="陌生人消息">
+	<ref name="sender" ref="Friend" desc="消息发送者"/>
+	<refList name="messageChain" ref="Message" desc="消息数组"/>
+</event>

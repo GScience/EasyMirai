@@ -28,6 +28,7 @@ namespace EasyMirai.Generator
         public const string CategoryApiRequest = "Api.Request";
         public const string CategoryApiResponse = "Api.Response";
         public const string CategoryObject = "Object";
+        public const string CategoryEvent = "Event";
 
         /// <summary>
         /// 已经加载的所有对象
@@ -62,6 +63,8 @@ namespace EasyMirai.Generator
                 Classes.Add(FromMessageDef(msg));
             foreach (var api in protocol.Apis)
                 Classes.Add(FromApiDef(api));
+            foreach (var eventDef in protocol.Events)
+                Classes.Add(FromEventDef(eventDef));
         }
 
         private ClassDef AddInternalClass(MiraiProtocol protocol, string name, string description)
@@ -137,6 +140,18 @@ namespace EasyMirai.Generator
         {
             var classDef = FromObjectDef(msg, _messageBaseDef, CategoryMessage);
             classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "消息类型");
+            return classDef;
+        }
+
+        /// <summary>
+        /// 从事件定义中创建类型，若已经加载则直接返回
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        private ClassDef FromEventDef(EventDef msg)
+        {
+            var classDef = FromObjectDef(msg, _messageBaseDef, CategoryEvent);
+            classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "事件类型");
             return classDef;
         }
 

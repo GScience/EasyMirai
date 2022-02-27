@@ -151,6 +151,9 @@
 	<!--Message-->
 	<xs:element name="message" type="userType"/>
 	
+	<!--Event-->
+	<xs:element name="event" type="userType"/>
+	
 	<!--User Defined Type-->
 	<xs:element name="object" type="userType"/>
 	

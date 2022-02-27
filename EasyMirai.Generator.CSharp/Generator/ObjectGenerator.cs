@@ -123,6 +123,9 @@ namespace EasyMirai.Generator.CSharp.Generator
 using System;
 using System.Collections;
 using System.Text.Json.Serialization;
+using {EventGenerator.RootNamespace};
+using {MessageGenerator.RootNamespace};
+using {ApiGenerator.RootNamespace};
 
 namespace {namespaceDef}
 {{

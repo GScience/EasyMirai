@@ -9,6 +9,8 @@ namespace EasyMirai.Generator.CSharp.Generator
 {
     internal class HttpAdapterGenerator : GeneratorBase
     {
+        public static string RootNamespace => $"{MiraiSource.RootNamespace}.Adapter";
+
         public List<(string name, ClassDef apiDef, string cmd, string method, string contentType)> ApiList
                = new List<(string name, ClassDef apiDef, string cmd, string method, string contentType)>();
 
@@ -79,10 +81,11 @@ namespace EasyMirai.Generator.CSharp.Generator
 
 using System;
 using System.Text.Json.Serialization;
-using {namespaceDef}.Api;
-using {namespaceDef}.Message;
+using {EventGenerator.RootNamespace};
+using {MessageGenerator.RootNamespace};
+using {ApiGenerator.RootNamespace};
 
-namespace {namespaceDef}.Adapter
+namespace {RootNamespace}
 {{
     /// <summary>
     /// Http Adapter

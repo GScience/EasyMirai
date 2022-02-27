@@ -8,6 +8,8 @@ namespace EasyMirai.Generator.CSharp.Generator
 {
     internal class ApiGenerator : GeneratorBase
     {
+        public static string RootNamespace => $"{MiraiSource.RootNamespace}.Api";
+
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             var source = base.GenerateFrom(classDef, namespaceDef);
@@ -21,9 +23,10 @@ namespace EasyMirai.Generator.CSharp.Generator
 
 using System;
 using System.Text.Json.Serialization;
-using {namespaceDef}.Message;
+using {EventGenerator.RootNamespace};
+using {MessageGenerator.RootNamespace};
 
-namespace {namespaceDef}.Api
+namespace {RootNamespace}
 {{
     /// <summary>
     /// {classDef.Description}

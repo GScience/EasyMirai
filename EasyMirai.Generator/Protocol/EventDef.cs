@@ -8,9 +8,9 @@ using System.Xml;
 namespace EasyMirai.Generator.Protocol
 {
     /// <summary>
-    /// Mirai 消息，继承自 ObjectDef
+    /// Mirai 事件，继承自 ObjectDef
     /// </summary>
-    public class MessageDef : ObjectDef
+    public class EventDef : ObjectDef
     {
         /// <summary>
         /// 特殊处理消息对象的名称与描述
@@ -30,7 +30,7 @@ namespace EasyMirai.Generator.Protocol
 
         public override string ToString()
         {
-            return "Message: " + Name;
+            return "Event: " + Name;
         }
     }
 }
