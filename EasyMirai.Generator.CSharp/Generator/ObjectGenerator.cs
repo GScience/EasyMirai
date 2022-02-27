@@ -98,9 +98,11 @@ namespace EasyMirai.Generator.CSharp.Generator
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
 
+            var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
+
             string source =
                 $"{newLine}{classComment}" +
-                $"{newLine}public class {classDef.Name}" +
+                $"{newLine}public class {classDef.Name}{baseClassSource}" +
                 $"{newLine}{{" +
                 // 成员定义
                 $"{newLine}#region Members" +

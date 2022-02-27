@@ -150,7 +150,7 @@ namespace EasyMirai.Generator
         /// <returns></returns>
         private ClassDef FromEventDef(EventDef msg)
         {
-            var classDef = FromObjectDef(msg, _messageBaseDef, CategoryEvent);
+            var classDef = FromObjectDef(msg, null, CategoryEvent);
             classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "事件类型");
             return classDef;
         }
