@@ -120,6 +120,41 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
             return ctorBodySource;
         }
 
+        private string GenGetPropertyClassSource(MemberDef m, int i)
+        {
+            string source;
+
+            switch (m.Type)
+            {
+                case MemberType.String:
+                    source = $@"
+                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
+                writer.WriteStringValue(value.{m.Name.ToUpperCamel()});";
+                    break;
+
+                case MemberType.Int:
+                case MemberType.Long:
+                    source = $@"
+                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
+                writer.WriteNumberValue(value.{m.Name.ToUpperCamel()});";
+                    break;
+                case MemberType.Boolean:
+                    source = $@"
+                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
+                writer.WriteBooleanValue(value.{m.Name.ToUpperCamel()});";
+                    break;
+                default:
+                    source = $@"
+                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
+                if ({GetMemberConverterName(m)} is JsonConverter<{m.GetCSharpMemberType()}> tConverter{i})
+                    tConverter{i}.Write(writer, value.{m.Name.ToUpperCamel()}, options); 
+                else
+                    JsonSerializer.Serialize(writer, value.{m.Name.ToUpperCamel()}, options);";
+                    break;
+            }
+            return source;
+        }
+
         /// <summary>
         /// 生成指定类型的序列化构造器
         /// </summary>
@@ -138,12 +173,7 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
                                         obj.{m.Name.ToUpperCamel()} = JsonSerializer.Deserialize<{m.GetCSharpMemberType()}>(ref reader, options); 
                                     break;"));
 
-            var getPropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select((m, i) => $@"
-                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
-                if ({GetMemberConverterName(m)} is JsonConverter<{m.GetCSharpMemberType()}> tConverter{i})
-                    tConverter{i}.Write(writer, value.{m.Name.ToUpperCamel()}, options); 
-                else
-                    JsonSerializer.Serialize(writer, value.{m.Name.ToUpperCamel()}, options);"));
+            var getPropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(GenGetPropertyClassSource));
 
             var setPropertyTableSource = string.Join($", {Environment.NewLine}", classDef.Members.Values.Select(m => $@"
                 {{ 
