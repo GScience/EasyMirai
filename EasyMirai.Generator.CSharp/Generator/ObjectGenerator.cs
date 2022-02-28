@@ -40,18 +40,20 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
-                // 移除JsonPropertyName因为已经引入静态序列化代码生成
+                // TODO: 移除JsonPropertyName
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
-                //var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
+                var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
                 return
                     $"{newLine}\t{memberComment}" +
-                    //$"{newLine}\t{jsonPropertyName}" +
+                    $"{newLine}\t{jsonPropertyName}" +
                     $"{newLine}\tpublic {memberDef.GetCSharpMemberDefine()} {{ get; set; }}";
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
-            var classConverter 
-                = $"[JsonConverter(typeof({SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}))]";
+            var classConverter
+                = SerializeGenerator.GenerateSerializeSource
+                    ? $"[JsonConverter(typeof({SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}))]"
+                    : "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
 
