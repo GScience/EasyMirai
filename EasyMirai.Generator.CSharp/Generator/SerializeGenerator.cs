@@ -162,10 +162,12 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
 
             var converterSource = $@"
         internal class {GetClassConverterName(classDef)} : JsonConverter<{classDef.FullName}>
-        {{{setPropertyFunctionSource}
-            private Dictionary<string, MemberSerializeDelegate<{classDef.FullName}>> _memberTable = new()
+        {{
+            /*{setPropertyFunctionSource}*/
+
+            /*private Dictionary<string, MemberSerializeDelegate<{classDef.FullName}>> _memberTable = new()
             {{{setPropertyTableSource}
-            }};
+            }};*/
             
             public override {classDef.FullName} Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {{
