@@ -24,6 +24,10 @@ namespace EasyMirai.Generator.CSharp
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryAdapterWs] = new WsAdapterGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryAdapterHttp] = new HttpAdapterGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryEvent] = new EventGenerator();
+            GeneratorBase.SourceGeneratorTable[MiraiModule.CategorySerializer] = new SerializeGenerator();
+
+            foreach (var generator in GeneratorBase.SourceGeneratorTable.Values)
+                generator.Init();
 
             foreach (var classDef in module.Classes)
                 if (GeneratorBase.SourceGeneratorTable.TryGetValue(classDef.Category, out ISourceGenerator generator))
@@ -34,11 +38,21 @@ namespace EasyMirai.Generator.CSharp
                 {
                     var source = generator.GenerateFrom(classDef, namespaceDef);
                     var classsPath = generator.GetClassDir(classDef);
-                    var fileName = string.IsNullOrEmpty(classsPath) ?
-                        $"{classDef.Name}.g.cs" :
-                        $"{classsPath}.{classDef.Name}.g.cs";
+                    var fileName = GetOutputFileName(classDef.Name, classsPath);
                     SourceCodeDict[fileName] = source;
                 }
+
+            foreach (var generator in GeneratorBase.SourceGeneratorTable.Values)
+                generator.PostProcessing(SourceCodeDict);
+
+            GeneratorBase.SourceGeneratorTable.Clear();
+        }
+
+        public static string GetOutputFileName(string className, string classPath = "")
+        {
+            return string.IsNullOrEmpty(classPath) ?
+                $"{className}.g.cs" :
+                $"{classPath}.{className}.g.cs";
         }
     }
 }

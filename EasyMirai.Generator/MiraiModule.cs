@@ -29,11 +29,13 @@ namespace EasyMirai.Generator
         public const string CategoryApiResponse = "Api.Response";
         public const string CategoryObject = "Object";
         public const string CategoryEvent = "Event";
+        public const string CategorySerializer = "Serializer";
 
         /// <summary>
         /// 已经加载的所有对象
         /// </summary>
-        public Dictionary<ProtocolComponent, ClassDef> ClassTable = new Dictionary<ProtocolComponent, ClassDef>();
+        public Dictionary<ProtocolComponent, ClassDef> ClassTable 
+            = new Dictionary<ProtocolComponent, ClassDef>();
 
         public List<ClassDef> Classes { get; private set; } = new List<ClassDef>();
         private ClassDef _wsAdapter { get; set; }
@@ -91,9 +93,11 @@ namespace EasyMirai.Generator
             var requestClass = FromObjectDef(apiDef.Request, null, CategoryApiRequest);
             requestClass.Name = "Request";
             requestClass.Description = apiDef.Name + ".Request";
+            requestClass.Owner = classDef;
             var responseClass = FromObjectDef(apiDef.Response, null, CategoryApiResponse);
             responseClass.Name = "Response";
             responseClass.Description = apiDef.Name + ".Response";
+            responseClass.Owner = classDef;
 
             if (apiDef.HttpAdapter != null)
             {
@@ -217,6 +221,7 @@ namespace EasyMirai.Generator
                 // 给内部匿名对象一个名称
                 typeDef.Name = obj.Name + objDef.Key.FirstToUpper();
                 typeDef.Description = objDef.Value.description;
+                typeDef.Owner = classDef;
                 classDef.Classes.Add(typeDef);
 
                 var member = new MemberDef(objDef.Key, objDef.Value.description, memberType, typeDef);
@@ -272,6 +277,7 @@ namespace EasyMirai.Generator
                 // 给内部匿名对象一个名称
                 typeDef.Name = obj.Name + objDef.Key.FirstToUpper();
                 typeDef.Description = objDef.Value.description;
+                typeDef.Owner = classDef;
                 classDef.Classes.Add(typeDef);
 
                 var member = new MemberDef(objDef.Key, objDef.Value.description, memberType, typeDef);

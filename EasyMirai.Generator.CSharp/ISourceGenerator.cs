@@ -11,6 +11,11 @@ namespace EasyMirai.Generator.CSharp
     public interface ISourceGenerator
     {
         /// <summary>
+        /// 初始化
+        /// </summary>
+        void Init();
+
+        /// <summary>
         /// 生成源码
         /// </summary>
         /// <param name="classDef"></param>
@@ -27,7 +32,7 @@ namespace EasyMirai.Generator.CSharp
         /// <summary>
         /// 后处理
         /// </summary>
-        void PostProcessing();
+        void PostProcessing(Dictionary<string, string> sources);
 
         /// <summary>
         /// 获取类型路径

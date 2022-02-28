@@ -23,14 +23,5 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             return "Event";
         }
-
-
-        /// <summary>
-        /// 后处理负责序列化相关事项
-        /// </summary>
-        public override void PostProcessing()
-        {
-
-        }
     }
 }

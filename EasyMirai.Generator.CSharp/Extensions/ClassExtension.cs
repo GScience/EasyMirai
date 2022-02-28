@@ -22,7 +22,7 @@ namespace EasyMirai.Generator.CSharp.Extensions
                     .OrderBy(m => m.Type)
                     .ThenBy(m => m.Name)
                     .Where(memberDef => !ignoreArgs.Contains(memberDef.Name.ToLowerCamel()))
-                    .Select(memberDef => ObjectGenerator.GetMemberSource(memberDef, true)));
+                    .Select(memberDef => memberDef.GetCSharpMemberDefine(true)));
         }
 
         /// <summary>

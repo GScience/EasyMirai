@@ -25,6 +25,7 @@ using System;
 using System.Text.Json.Serialization;
 using {EventGenerator.RootNamespace};
 using {MessageGenerator.RootNamespace};
+using {SerializeGenerator.RootNamespace};
 
 namespace {RootNamespace}
 {{
@@ -46,11 +47,6 @@ namespace {RootNamespace}
         public override string GetClassDir(ClassDef classDef)
         {
             return "Api";
-        }
-
-        public override void PostProcessing()
-        {
-            
         }
     }
 }

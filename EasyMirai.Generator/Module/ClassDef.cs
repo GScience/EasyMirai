@@ -28,9 +28,19 @@ namespace EasyMirai.Generator.Module
         public ClassDef Base { get; set; }
 
         /// <summary>
+        /// 类型所有者
+        /// </summary>
+        public ClassDef Owner { get; set; }
+
+        /// <summary>
         /// 类名
         /// </summary>
-        public string Name { get; set; } = "";
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 全名
+        /// </summary>
+        public string FullName => Owner == null ? Name : $"{Owner.FullName}.{Name}";
 
         /// <summary>
         /// 类型分类，用于后续代码生成器的选择

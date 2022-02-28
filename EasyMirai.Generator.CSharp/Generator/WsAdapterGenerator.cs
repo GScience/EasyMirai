@@ -83,6 +83,7 @@ using System.Text.Json.Serialization;
 using {EventGenerator.RootNamespace};
 using {MessageGenerator.RootNamespace};
 using {ApiGenerator.RootNamespace};
+using {SerializeGenerator.RootNamespace};
 
 namespace {RootNamespace}
 {{
@@ -105,11 +106,6 @@ namespace {RootNamespace}
         public override string GetClassDir(ClassDef classDef)
         {
             return "Adapter";
-        }
-
-        public override void PostProcessing()
-        {
-
         }
     }
 }

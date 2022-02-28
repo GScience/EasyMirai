@@ -9,61 +9,14 @@ namespace EasyMirai.Generator.CSharp.Generator
 {
     internal class ObjectGenerator : GeneratorBase
     {
-        public static string List = "IEnumerable";
+        public override void Init()
+        {
+            base.Init();
+        }
 
         public override void PreProcessing(ClassDef classDef)
         {
             base.PreProcessing(classDef);
-        }
-
-        /// <summary>
-        /// 生成成员源码
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        public static string GetMemberSource(MemberDef memberDef, bool useLowerCamel = false)
-        {
-            var memberTypeName = "";
-
-            switch (memberDef.Type)
-            {
-                case MemberType.String:
-                    memberTypeName = "string";
-                    break;
-                case MemberType.StringList:
-                    memberTypeName = $"{List}<string>";
-                    break;
-                case MemberType.Boolean:
-                    memberTypeName = "bool";
-                    break;
-                case MemberType.BooleanList:
-                    memberTypeName = $"{List}<bool>";
-                    break;
-                case MemberType.Int:
-                    memberTypeName = $"int";
-                    break;
-                case MemberType.IntList:
-                    memberTypeName = $"{List}<int>";
-                    break;
-                case MemberType.Long:
-                    memberTypeName = "long";
-                    break;
-                case MemberType.LongList:
-                    memberTypeName = $"{List}<long>";
-                    break;
-                case MemberType.Object:
-                    memberTypeName = memberDef.Reference.Name;
-                    break;
-                case MemberType.ObjectList:
-                    memberTypeName = $"{List}<{memberDef.Reference.Name}>";
-                    break;
-                default:
-                    throw new NotImplementedException($"Unknown type {memberDef.Type}");
-            }
-
-            if (useLowerCamel)
-                return $"{memberTypeName} {memberDef.Name.ToLowerCamel()}";
-            return $"{memberTypeName} {memberDef.Name.ToUpperCamel()}";
         }
 
         /// <summary>
@@ -87,21 +40,24 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
-
+                // 移除JsonPropertyName因为已经引入静态序列化代码生成
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
-                var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
+                //var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
                 return
                     $"{newLine}\t{memberComment}" +
-                    $"{newLine}\t{jsonPropertyName}" +
-                    $"{newLine}\tpublic {GetMemberSource(memberDef)} {{ get; set; }}";
+                    //$"{newLine}\t{jsonPropertyName}" +
+                    $"{newLine}\tpublic {memberDef.GetCSharpMemberDefine()} {{ get; set; }}";
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
+            var classConverter 
+                = $"[JsonConverter(typeof({SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}))]";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
 
             string source =
                 $"{newLine}{classComment}" +
+                $"{newLine}{classConverter}" +
                 $"{newLine}public class {classDef.Name}{baseClassSource}" +
                 $"{newLine}{{" +
                 // 成员定义
@@ -114,6 +70,8 @@ namespace EasyMirai.Generator.CSharp.Generator
                 $"{newLine}{string.Join(Environment.NewLine, innerClassDefs)}" +
                 $"{newLine}#endregion" +
                 $"{newLine}}}";
+
+            SerializeGenerator.SerializableClasses.Add(classDef);
 
             return source;
         }
@@ -128,6 +86,7 @@ using System.Text.Json.Serialization;
 using {EventGenerator.RootNamespace};
 using {MessageGenerator.RootNamespace};
 using {ApiGenerator.RootNamespace};
+using {SerializeGenerator.RootNamespace};
 
 namespace {namespaceDef}
 {{
@@ -139,14 +98,5 @@ namespace {namespaceDef}
             return source;
         }
 
-        public override string GetClassDir(ClassDef classDef)
-        {
-            return "";
-        }
-
-        public override void PostProcessing()
-        {
-
-        }
     }
 }
