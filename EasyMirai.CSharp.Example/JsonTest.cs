@@ -31,7 +31,7 @@ namespace EasyMirai.CSharp.Example
             using var memoryStream = new MemoryStream();
             var writer = new Utf8JsonWriter(memoryStream);
 
-            MiraiJsonSerializers.GroupMessageConverter.Write(writer, groupMessage);
+            groupMessage.DefaultConverter.Write(writer, groupMessage);
             writer.Flush();
             testJson = Encoding.UTF8.GetString(memoryStream.ToArray());
             var results = new Dictionary<int, List<double>>()
@@ -75,7 +75,7 @@ namespace EasyMirai.CSharp.Example
             {
                 var jsonReader = new Utf8JsonReader(Encoding.UTF8.GetBytes(testJson));
                 jsonReader.Read();
-                var obj = MiraiJsonSerializers.GroupMessageConverter.Read(ref jsonReader);
+                var obj = groupMessage.DefaultConverter.Read(ref jsonReader);
             }
             var endTime = DateTime.Now;
             var deltaTime = endTime - startTime;
@@ -96,7 +96,7 @@ namespace EasyMirai.CSharp.Example
             {
                 var writer = new Utf8JsonWriter(memoryStream);
 
-                MiraiJsonSerializers.GroupMessageConverter.Write(writer, groupMessage);
+                groupMessage.DefaultConverter.Write(writer, groupMessage);
                 memoryStream.Seek(0, SeekOrigin.Begin);
             }
             var endTime = DateTime.Now;

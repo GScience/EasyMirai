@@ -70,6 +70,24 @@ namespace {RootNamespace}
 {{
     public static partial class {SerializerClassName}
     {{{converterClassesSource}
+        public class ConverterWrapper<T> where T : ISerializable<T>
+        {{
+            public delegate T ReadHandler(ref Utf8JsonReader reader);
+            public delegate void WriteHandler(Utf8JsonWriter writer, T value);
+
+            public ReadHandler Read {{ get; }}
+            public WriteHandler Write {{ get; }}
+
+            public ConverterWrapper(ReadHandler read, WriteHandler write)
+            {{
+                Read = read;
+                Write = write;
+            }}
+        }}
+        public interface ISerializable<T> where T : ISerializable<T>
+        {{
+            public ConverterWrapper<T> DefaultConverter {{ get; }}
+        }}
     }}
 }}";
             }
@@ -232,7 +250,7 @@ namespace {RootNamespace}
             var writePropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(GenWritePropertyClassSource));
 
             var converterSource = $@"
-        public class {GetClassConverterName(classDef)}
+        internal class {GetClassConverterName(classDef)}
         {{
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static {classDef.FullName} Read(ref Utf8JsonReader reader)
@@ -290,7 +308,7 @@ namespace {RootNamespace}
             return $"{ReplaceIllegalNameChar(classDef.FullName.ToUpperCamel())}Converter";
         }
 
-        public static string ReplaceIllegalNameChar(string name)
+        private static string ReplaceIllegalNameChar(string name)
         {
             return name.Replace('.', '_').Replace('>', '_').Replace('<', '_');
         }

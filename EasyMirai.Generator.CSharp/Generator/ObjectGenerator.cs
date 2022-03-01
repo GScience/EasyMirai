@@ -40,7 +40,7 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
-                // TODO: 移除JsonPropertyName
+                // 保留JsonPropertyName以支持c#内置json序列化方式
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
                 var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
                 return
@@ -50,19 +50,31 @@ namespace EasyMirai.Generator.CSharp.Generator
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
-            /*var classConverter
+            var converterName = $"{SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}";
+            var classConverterDefineSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"[JsonConverter(typeof({SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}))]"
-                    : "";*/
-            var classConverter = "";
+                    ? $"public static {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> defaultConverter = new ({converterName}.Read, {converterName}.Write);"
+                    : "";
+            var classConverterGetterSource
+                = SerializeGenerator.GenerateSerializeSource
+                    ? $"[JsonIgnore] public {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
+                    : "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
 
+            var classSerializable
+                = SerializeGenerator.GenerateSerializeSource
+                    ? $"{(string.IsNullOrEmpty(baseClassSource) ? " :" : ",")} {SerializeGenerator.SerializerClassName}.ISerializable<{classDef.FullName}>"
+                    : "";
+
             string source =
                 $"{newLine}{classComment}" +
-                $"{newLine}{classConverter}" +
-                $"{newLine}public class {classDef.Name}{baseClassSource}" +
+                $"{newLine}public class {classDef.Name}{baseClassSource}{classSerializable}" +
                 $"{newLine}{{" +
+                // Converter
+                $"{newLine}\t{classConverterDefineSource}" +
+                $"{newLine}\t{classConverterGetterSource}" +
+                $"{newLine}" +
                 // 成员定义
                 $"{newLine}#region Members" +
                 $"{newLine}{string.Join(Environment.NewLine, memberDefs)}" + 
