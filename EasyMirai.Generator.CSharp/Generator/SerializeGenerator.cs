@@ -179,17 +179,22 @@ namespace {RootNamespace}
                     return $@"reader.GetString()";
                 case MemberType.Object:
                     return $@"{GetClassConverterName(m.Reference)}.Read(ref reader)";
-                default:
-                    return $@"
-                                        var list = new List<{m.GetCSharpMemberListComponentType()}>();
+                case MemberType.BooleanList:
+                case MemberType.IntList:
+                case MemberType.LongList:
+                case MemberType.StringList:
+                case MemberType.ObjectList:
+                    return $@"var list = new List<{m.GetCSharpMemberListComponentType()}>();
 
-                                        while(true)
-                                        {{
-                                            reader.Read();
-                                            if (reader.TokenType == JsonTokenType.EndArray)
-                                                break;
-                                            list.Add({GenReadValueSource(m, true)});
-                                        }}";
+                                    while(true)
+                                    {{
+                                        reader.Read();
+                                        if (reader.TokenType == JsonTokenType.EndArray)
+                                            break;
+                                        list.Add({GenReadValueSource(m, true)});
+                                    }}";
+                default:
+                    return $@"throw new NotImplementedException()";
             }
         }
 
@@ -215,35 +220,44 @@ namespace {RootNamespace}
                 {
                     case MemberType.Boolean:
                         return $@"
-                                    case ""{m.Name.ToLowerCamel()}"":
-                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
-                                        break;";
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                    break;";
                     case MemberType.Int:
                         return $@"
-                                    case ""{m.Name.ToLowerCamel()}"":
-                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
-                                        break;";
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                    break;";
                     case MemberType.Long:
                         return $@"
-                                    case ""{m.Name.ToLowerCamel()}"":
-                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
-                                        break;";
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                    break;";
                     case MemberType.String:
                         return $@"
-                                    case ""{m.Name.ToLowerCamel()}"":
-                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
-                                        break;";
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                    break;";
                     case MemberType.Object:
                         return $@"
-                                    case ""{m.Name.ToLowerCamel()}"":
-                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
-                                        break;";
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                    break;";
+                    case MemberType.BooleanList:
+                    case MemberType.IntList:
+                    case MemberType.LongList:
+                    case MemberType.StringList:
+                    case MemberType.ObjectList:
+                        return $@"
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    {GenReadValueSource(m)};
+                                    obj.{m.Name.ToUpperCamel()} = list;
+                                    break;";
                     default:
                         return $@"
-                                    case ""{m.Name.ToLowerCamel()}"":
-                                        {GenReadValueSource(m)};
-                                        obj.{m.Name.ToUpperCamel()} = list;
-                                        break;";
+                                case ""{m.Name.ToLowerCamel()}"":
+                                    throw new NotImplementedException();
+                                    break;";
                 }
             }));
 
