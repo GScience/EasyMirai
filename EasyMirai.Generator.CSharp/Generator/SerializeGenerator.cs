@@ -250,7 +250,7 @@ namespace {RootNamespace}
             var writePropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(GenWritePropertyClassSource));
 
             var converterSource = $@"
-        internal class {GetClassConverterName(classDef)}
+        internal static class {GetClassConverterName(classDef)}
         {{
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static {classDef.FullName} Read(ref Utf8JsonReader reader)
