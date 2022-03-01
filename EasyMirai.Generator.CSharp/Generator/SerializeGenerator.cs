@@ -42,9 +42,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// <param name="sources"></param>
         public override void PostProcessing(Dictionary<string, string> sources)
         {
-            var source = string.Join(Environment.NewLine, SerializableClasses.Select(c=>c.FullName));
-
-            source = GenerateSourceHead();
+            var source = GenerateSourceHead();
 
             if (GenerateSerializeSource)
             {            
@@ -59,12 +57,6 @@ namespace EasyMirai.Generator.CSharp.Generator
                         _converterGetterTable.Select(pair => $@"
             {pair.Key} = DefaultOptions.GetConverter(typeof({pair.Value}));"));
 
-                var defineMemberConverterSource
-                    = string.Join(
-                        "",
-                        _converterGetterTable.Select(pair => $@"
-        private static JsonConverter {pair.Key};"));
-
                 source += $@"
 using System;
 using System.Text.Json;
@@ -78,7 +70,6 @@ namespace {RootNamespace}
 {{
     public static partial class {SerializerClassName}
     {{{converterClassesSource}
-{defineMemberConverterSource}
     }}
 }}";
             }
