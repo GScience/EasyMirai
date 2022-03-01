@@ -21,8 +21,8 @@ namespace EasyMirai.CSharp.Adapter
         /// <param name="method"></param>
         /// <param name="contentType"></param>
         private async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd, string method, string contentType)
-            where TRequest : Util.MiraiJsonSerializers.ISerializable<TRequest>
-            where TResponse : Util.MiraiJsonSerializers.ISerializable<TResponse>
+            where TRequest : Util.MiraiJsonSerializers.ISerializable<TRequest>, new()
+            where TResponse : Util.MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
             var writer = new Utf8JsonWriter(testStream);
             request.DefaultConverter.Write(writer, request);
@@ -30,10 +30,8 @@ namespace EasyMirai.CSharp.Adapter
             var requestJson = Encoding.UTF8.GetString(testStream.ToArray());
             testStream.Seek(0, SeekOrigin.Begin);
 
-            using var ms = new MemoryStream(Encoding.UTF8.GetBytes("{\"a\":1}"));
-
-            var response = await JsonSerializer.DeserializeAsync<TResponse>(ms);
-
+            var response = new TResponse();
+            response.DefaultConverter.Read("{}", response);
             if (response == null)
                 throw new Exception("Failed to deserialize object");
             return response;

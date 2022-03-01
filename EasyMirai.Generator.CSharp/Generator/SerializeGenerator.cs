@@ -70,21 +70,21 @@ namespace {RootNamespace}
 {{
     public static partial class {SerializerClassName}
     {{{converterClassesSource}
-        public class ConverterWrapper<T> where T : ISerializable<T>
+        public partial class ConverterWrapper<T> where T : ISerializable<T>, new()
         {{
-            public delegate T ReadHandler(ref Utf8JsonReader reader);
-            public delegate void WriteHandler(Utf8JsonWriter writer, T value);
+            public delegate void ReadDelegate(ref Utf8JsonReader reader, T obj);
+            public delegate void WriteDelegate(Utf8JsonWriter writer, T value);
 
-            public ReadHandler Read {{ get; }}
-            public WriteHandler Write {{ get; }}
+            public ReadDelegate ReadHandler {{ get; }}
+            public WriteDelegate WriteHandler {{ get; }}
 
-            public ConverterWrapper(ReadHandler read, WriteHandler write)
+            public ConverterWrapper(ReadDelegate read, WriteDelegate write)
             {{
-                Read = read;
-                Write = write;
+                ReadHandler = read;
+                WriteHandler = write;
             }}
         }}
-        public interface ISerializable<T> where T : ISerializable<T>
+        public interface ISerializable<T> where T : ISerializable<T>, new()
         {{
             public ConverterWrapper<T> DefaultConverter {{ get; }}
         }}
@@ -252,11 +252,16 @@ namespace {RootNamespace}
             var converterSource = $@"
         internal static class {GetClassConverterName(classDef)}
         {{
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static {classDef.FullName} Read(ref Utf8JsonReader reader)
             {{
                 var obj = new {classDef.FullName}();
-                
+                Read(ref reader, obj);
+                return obj;
+            }}
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static void Read(ref Utf8JsonReader reader, {classDef.FullName} obj)
+            {{
                 bool readToEnd = false;
                 do
                 {{
@@ -279,7 +284,6 @@ namespace {RootNamespace}
                             break;
                     }}
                 }} while (!readToEnd);
-                return obj;
             }}
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

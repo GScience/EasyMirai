@@ -20,13 +20,11 @@ namespace EasyMirai.CSharp.Example
             groupMessage.Sender = new Member();
             groupMessage.Sender.Group = new Group();
             groupMessage.Sender.Group.Id = 12345;
-            /*groupMessage.MessageChain = new List<IMessage>()
+            groupMessage.MessageChain = new List<IMessage>()
             {
                 new Source(){ Id=123 },
                 new Plain(){ Msg = "456"},
-            };*/
-            //testJson = JsonSerializer.Serialize(groupMessage, MiraiJsonConverters.DefaultOptions);
-            //groupMessage = JsonSerializer.Deserialize<GroupMessage>(testJson, MiraiJsonConverters.DefaultOptions);
+            };
 
             using var memoryStream = new MemoryStream();
             var writer = new Utf8JsonWriter(memoryStream);
@@ -50,14 +48,9 @@ namespace EasyMirai.CSharp.Example
                 GC.WaitForPendingFinalizers();
                 results[1].Add(Test1());
                 results[2].Add(Test2());
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                results[3].Add(Test3());
-                results[4].Add(Test4());
             }
 
-            for (var i = 1; i <= 4; ++i)
+            for (var i = 1; i <= 2; ++i)
             {
                 var times = results[i];
                 var meanTime = times.Min();
@@ -107,7 +100,7 @@ namespace EasyMirai.CSharp.Example
             return ms;
         }
 
-        static double Test3()
+        /*static double Test3()
         {
             Console.WriteLine($"Running Default Deserialize");
 
@@ -144,6 +137,6 @@ namespace EasyMirai.CSharp.Example
 
             Console.WriteLine($"Default Serialize time {ms}ms");
             return ms;
-        }
+        }*/
     }
 }
