@@ -14,7 +14,7 @@ namespace EasyMirai.Generator.CSharp.Generator
     internal class SerializeGenerator : GeneratorBase
     {
         public static string RootNamespace = $"{MiraiSource.RootNamespace}.Util";
-        public static string SerializerClassName = "MiraiJsonConverters";
+        public static string SerializerClassName = "MiraiJsonSerializers";
 
         /// <summary>
         /// 是否生成序列化代码
@@ -76,19 +76,9 @@ using {MessageGenerator.RootNamespace};
 
 namespace {RootNamespace}
 {{
-    public static class {SerializerClassName}
+    public static partial class {SerializerClassName}
     {{{converterClassesSource}
 {defineMemberConverterSource}
-
-        public static JsonSerializerOptions DefaultOptions = new();
-
-        static {SerializerClassName}()
-        {{
-{GenConverterStaticCtor()}
-{getMemberConverterSource}
-        }}
-
-        private delegate void MemberSerializeDelegate<T>(ref Utf8JsonReader reader, T obj, JsonSerializerOptions options);
     }}
 }}";
             }
@@ -99,59 +89,107 @@ using System.Text.Json;
 
 namespace {RootNamespace}
 {{
-    public static class {SerializerClassName}
+    public static partial class {SerializerClassName}
     {{
-        public static JsonSerializerOptions DefaultOptions = new();
+        
     }}
 }}";
             }
             sources[MiraiSource.GetOutputFileName(SerializerClassName, "Util")] = source;
         }
 
-        /// <summary>
-        /// 创建静态构造器
-        /// </summary>
-        /// <returns></returns>
-        private string GenConverterStaticCtor()
-        {
-            var ctorBodySource = string.Join(Environment.NewLine, SerializableClasses.Select(c => 
-$@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"));
-
-            return ctorBodySource;
-        }
-
-        private string GenGetPropertyClassSource(MemberDef m, int i)
+        private string GenWriteValueSource(MemberDef m, bool isListComponent = false, string listComponentName = "")
         {
             string source;
 
-            switch (m.Type)
+            var type = m.Type;
+            var name = $"value.{m.Name.ToUpperCamel()}";
+            if (isListComponent)
+            {
+                type = m.GetListComponentType();
+                name = listComponentName;
+            }
+
+            switch (type)
             {
                 case MemberType.String:
-                    source = $@"
-                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
-                writer.WriteStringValue(value.{m.Name.ToUpperCamel()});";
+                    source = $@"writer.WriteStringValue({name});";
                     break;
 
                 case MemberType.Int:
                 case MemberType.Long:
-                    source = $@"
-                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
-                writer.WriteNumberValue(value.{m.Name.ToUpperCamel()});";
+                    source = $@"writer.WriteNumberValue({name});";
                     break;
+
                 case MemberType.Boolean:
-                    source = $@"
-                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
-                writer.WriteBooleanValue(value.{m.Name.ToUpperCamel()});";
+                    source = $@"writer.WriteBooleanValue({name});";
                     break;
-                default:
+
+                case MemberType.Object:
+                    source = $@"{GetClassConverterName(m.Reference)}.Write(writer, {name});";
+                    break;
+
+                case MemberType.StringList:
+                case MemberType.IntList:
+                case MemberType.LongList:
+                case MemberType.BooleanList:
+                case MemberType.ObjectList:
                     source = $@"
-                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
-                if ({GetMemberConverterName(m)} is JsonConverter<{m.GetCSharpMemberType()}> tConverter{i})
-                    tConverter{i}.Write(writer, value.{m.Name.ToUpperCamel()}, options); 
-                else
-                    JsonSerializer.Serialize(writer, value.{m.Name.ToUpperCamel()}, options);";
+                writer.WriteStartArray();
+                if (value.{m.Name.ToUpperCamel()} != null)
+                {{
+                    foreach (var element in value.{m.Name.ToUpperCamel()})
+                        {GenWriteValueSource(m, true, "element")};
+                }}
+                writer.WriteEndArray();";
+                    break;
+
+                default:
+                    source = $@"throw new NotImplementedException();";
                     break;
             }
+
+            return source;
+        }
+
+        private string GenReadValueSource(MemberDef m, bool isListComponent = false)
+        {
+            MemberType type = m.Type;
+            if (isListComponent)
+                type = m.GetListComponentType();
+
+            switch (type)
+            {
+                case MemberType.Boolean:
+                    return $@"reader.GetBoolean()";
+                case MemberType.Int:
+                    return $@"reader.GetInt32()";
+                case MemberType.Long:
+                    return $@"reader.GetInt64()";
+                case MemberType.String:
+                    return $@"reader.GetString()";
+                case MemberType.Object:
+                    return $@"{GetClassConverterName(m.Reference)}.Read(ref reader)";
+                default:
+                    return $@"
+                                        var list = new List<{m.GetCSharpMemberListComponentType()}>();
+
+                                        while(true)
+                                        {{
+                                            reader.Read();
+                                            if (reader.TokenType == JsonTokenType.EndArray)
+                                                break;
+                                            list.Add({GenReadValueSource(m, true)});
+                                        }}";
+            }
+        }
+
+        private string GenWritePropertyClassSource(MemberDef m)
+        {
+            var source = $@"
+                writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
+                {GenWriteValueSource(m)}";
+
             return source;
         }
 
@@ -160,46 +198,53 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        private string GenConverterSourceFor(ClassDef classDef)
+        private string GenConverterSourceFor(ClassDef classDef, bool isListComponent = false)
         {
-            foreach (var member in classDef.Members.Values)
-                _converterGetterTable[GetMemberConverterName(member)] = member.GetCSharpMemberType();
+            var readPropertyCaseSource = string.Join(Environment.NewLine, classDef.Members.Values.Select((m, i) =>
+            {
+                switch (m.Type)
+                {
+                    case MemberType.Boolean:
+                        return $@"
+                                    case ""{m.Name.ToLowerCamel()}"":
+                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                        break;";
+                    case MemberType.Int:
+                        return $@"
+                                    case ""{m.Name.ToLowerCamel()}"":
+                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                        break;";
+                    case MemberType.Long:
+                        return $@"
+                                    case ""{m.Name.ToLowerCamel()}"":
+                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                        break;";
+                    case MemberType.String:
+                        return $@"
+                                    case ""{m.Name.ToLowerCamel()}"":
+                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                        break;";
+                    case MemberType.Object:
+                        return $@"
+                                    case ""{m.Name.ToLowerCamel()}"":
+                                        obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
+                                        break;";
+                    default:
+                        return $@"
+                                    case ""{m.Name.ToLowerCamel()}"":
+                                        {GenReadValueSource(m)};
+                                        obj.{m.Name.ToUpperCamel()} = list;
+                                        break;";
+                }
+            }));
 
-            var setPropertyCaseSource = string.Join(Environment.NewLine, classDef.Members.Values.Select((m, i) => $@"
-                                case ""{m.Name.ToLowerCamel()}"":
-                                    if ({GetMemberConverterName(m)} is JsonConverter<{m.GetCSharpMemberType()}> tConverter{i})
-                                        obj.{m.Name.ToUpperCamel()} = tConverter{i}.Read(ref reader, typeof({m.GetCSharpMemberType()}), options); 
-                                    else
-                                        obj.{m.Name.ToUpperCamel()} = JsonSerializer.Deserialize<{m.GetCSharpMemberType()}>(ref reader, options); 
-                                    break;"));
-
-            var getPropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(GenGetPropertyClassSource));
-
-            var setPropertyTableSource = string.Join($", {Environment.NewLine}", classDef.Members.Values.Select(m => $@"
-                {{ 
-                    ""{m.Name.ToLowerCamel()}"", 
-                    Setter_{m.Name.ToUpperCamel()}
-                }}"));
-
-            var setPropertyFunctionSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(m => $@"
-            private static void Setter_{m.Name.ToUpperCamel()}(ref Utf8JsonReader reader, {classDef.FullName} obj, JsonSerializerOptions options)
-            {{
-                if ({GetMemberConverterName(m)} is JsonConverter<{m.GetCSharpMemberType()}> tConverter)
-                    obj.{m.Name.ToUpperCamel()} = tConverter.Read(ref reader, typeof({m.GetCSharpMemberType()}), options); 
-                else
-                    obj.{m.Name.ToUpperCamel()} = JsonSerializer.Deserialize<{m.GetCSharpMemberType()}>(ref reader, options); 
-            }}"));
+            var writePropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(GenWritePropertyClassSource));
 
             var converterSource = $@"
-        internal class {GetClassConverterName(classDef)} : JsonConverter<{classDef.FullName}>
+        public class {GetClassConverterName(classDef)}
         {{
-            /*{setPropertyFunctionSource}*/
-
-            /*private Dictionary<string, MemberSerializeDelegate<{classDef.FullName}>> _memberTable = new()
-            {{{setPropertyTableSource}
-            }};*/
-            
-            public override {classDef.FullName} Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static {classDef.FullName} Read(ref Utf8JsonReader reader)
             {{
                 var obj = new {classDef.FullName}();
                 
@@ -215,9 +260,8 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
                         case JsonTokenType.PropertyName:
                             var propertyName = reader.GetString();
                             reader.Read();
-                            //_memberTable[propertyName](ref reader, obj, options);
                             switch (propertyName)
-                            {{{setPropertyCaseSource}
+                            {{{readPropertyCaseSource}
                                 default:
                                     break;
                             }}
@@ -228,10 +272,16 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
                 }} while (!readToEnd);
                 return obj;
             }}
-            
-            public override void Write(Utf8JsonWriter writer, {classDef.FullName} value, JsonSerializerOptions options)
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static void Write(Utf8JsonWriter writer, {classDef.FullName} value)
             {{
-                writer.WriteStartObject();{getPropertyClassSource}
+                if (value == null)
+                {{
+                    writer.WriteNullValue();
+                    return;
+                }}
+                writer.WriteStartObject();{writePropertyClassSource}
                 writer.WriteEndObject();
             }}
         }}";
@@ -247,16 +297,6 @@ $@"            DefaultOptions.Converters.Add(new {GetClassConverterName(c)}());"
         public static string GetClassConverterName(ClassDef classDef)
         {
             return $"{ReplaceIllegalNameChar(classDef.FullName.ToUpperCamel())}Converter";
-        }
-
-        /// <summary>
-        /// 获取成员对应转换器名称
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        public static string GetMemberConverterName(MemberDef member)
-        {
-            return $"_converter{ReplaceIllegalNameChar(member.GetCSharpMemberType().ToUpperCamel())}";
         }
 
         public static string ReplaceIllegalNameChar(string name)

@@ -14,4 +14,6 @@ var response = test.SendFriendMessageAsync(123, new List<IMessage>()).Result;
 
 JsonTest.TestMain();
 
+Utf8JsonReader reader = new Utf8JsonReader();
+
 return;

@@ -50,10 +50,11 @@ namespace EasyMirai.Generator.CSharp.Generator
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
-            var classConverter
+            /*var classConverter
                 = SerializeGenerator.GenerateSerializeSource
                     ? $"[JsonConverter(typeof({SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}))]"
-                    : "";
+                    : "";*/
+            var classConverter = "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
 

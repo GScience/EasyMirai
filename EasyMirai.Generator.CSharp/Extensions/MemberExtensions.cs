@@ -64,6 +64,39 @@ namespace EasyMirai.Generator.CSharp.Extensions
         }
 
         /// <summary>
+        /// 获取列表成员对应 C# 类型
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        public static string GetCSharpMemberListComponentType(this MemberDef memberDef)
+        {
+            string memberTypeName;
+
+            switch (memberDef.Type)
+            {
+                case MemberType.StringList:
+                    memberTypeName = $"string";
+                    break;
+                case MemberType.BooleanList:
+                    memberTypeName = $"bool";
+                    break;
+                case MemberType.IntList:
+                    memberTypeName = $"int";
+                    break;
+                case MemberType.LongList:
+                    memberTypeName = $"long";
+                    break;
+                case MemberType.ObjectList:
+                    memberTypeName = $"{memberDef.Reference.FullName}";
+                    break;
+                default:
+                    throw new NotImplementedException($"Unknown type {memberDef.Type}");
+            }
+
+            return memberTypeName;
+        }
+
+        /// <summary>
         /// 获取成员声明
         /// </summary>
         /// <param name="memberDef"></param>
@@ -75,6 +108,38 @@ namespace EasyMirai.Generator.CSharp.Extensions
             if (useLowerCamel)
                 return $"{memberTypeName} {memberDef.Name.ToLowerCamel()}";
             return $"{memberTypeName} {memberDef.Name.ToUpperCamel()}";
+        }
+
+        /// <summary>
+        /// 获取列表成员对应的类型
+        /// </summary>
+        /// <param name="memberDef"></param>
+        /// <returns></returns>
+        public static MemberType GetListComponentType(this MemberDef memberDef)
+        {
+            MemberType type;
+
+            switch (memberDef.Type)
+            {
+                case MemberType.BooleanList:
+                    type = MemberType.Boolean;
+                    break;
+                case MemberType.StringList:
+                    type = MemberType.String;
+                    break;
+                case MemberType.IntList:
+                    type = MemberType.Int;
+                    break;
+                case MemberType.LongList:
+                    type = MemberType.Long;
+                    break;
+                case MemberType.ObjectList:
+                    type = MemberType.Object;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            return type;
         }
     }
 }

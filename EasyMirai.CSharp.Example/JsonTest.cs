@@ -20,10 +20,20 @@ namespace EasyMirai.CSharp.Example
             groupMessage.Sender = new Member();
             groupMessage.Sender.Group = new Group();
             groupMessage.Sender.Group.Id = 12345;
+            /*groupMessage.MessageChain = new List<IMessage>()
+            {
+                new Source(){ Id=123 },
+                new Plain(){ Msg = "456"},
+            };*/
+            //testJson = JsonSerializer.Serialize(groupMessage, MiraiJsonConverters.DefaultOptions);
+            //groupMessage = JsonSerializer.Deserialize<GroupMessage>(testJson, MiraiJsonConverters.DefaultOptions);
 
-            testJson = JsonSerializer.Serialize(groupMessage, MiraiJsonConverters.DefaultOptions);
-            groupMessage = JsonSerializer.Deserialize<GroupMessage>(testJson, MiraiJsonConverters.DefaultOptions);
+            using var memoryStream = new MemoryStream();
+            var writer = new Utf8JsonWriter(memoryStream);
 
+            MiraiJsonSerializers.GroupMessageConverter.Write(writer, groupMessage);
+            writer.Flush();
+            testJson = Encoding.UTF8.GetString(memoryStream.ToArray());
             var results = new Dictionary<int, List<double>>()
             {
                 {1, new List<double>() },
@@ -40,9 +50,14 @@ namespace EasyMirai.CSharp.Example
                 GC.WaitForPendingFinalizers();
                 results[1].Add(Test1());
                 results[2].Add(Test2());
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                results[3].Add(Test3());
+                results[4].Add(Test4());
             }
 
-            for (var i = 1; i <= 2; ++i)
+            for (var i = 1; i <= 4; ++i)
             {
                 var times = results[i];
                 var meanTime = times.Min();
@@ -51,6 +66,48 @@ namespace EasyMirai.CSharp.Example
         }
 
         static double Test1()
+        {
+            Console.WriteLine($"Running Default Deserialize");
+
+            var startTime = DateTime.Now;
+
+            for (var i = 0; i < 100000; ++i)
+            {
+                var jsonReader = new Utf8JsonReader(Encoding.UTF8.GetBytes(testJson));
+                jsonReader.Read();
+                var obj = MiraiJsonSerializers.GroupMessageConverter.Read(ref jsonReader);
+            }
+            var endTime = DateTime.Now;
+            var deltaTime = endTime - startTime;
+            var ms = deltaTime.TotalMilliseconds;
+
+            Console.WriteLine($"Default Serialize time {ms}ms");
+            return ms;
+        }
+
+        static double Test2()
+        {
+            Console.WriteLine($"Running Default Serialize");
+
+            var startTime = DateTime.Now;
+
+            using var memoryStream = new MemoryStream();
+            for (var i = 0; i < 100000; ++i)
+            {
+                var writer = new Utf8JsonWriter(memoryStream);
+
+                MiraiJsonSerializers.GroupMessageConverter.Write(writer, groupMessage);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+            }
+            var endTime = DateTime.Now;
+            var deltaTime = endTime - startTime;
+            var ms = deltaTime.TotalMilliseconds;
+
+            Console.WriteLine($"Default Serialize time {ms}ms");
+            return ms;
+        }
+
+        static double Test3()
         {
             Console.WriteLine($"Running Default Deserialize");
 
@@ -68,15 +125,18 @@ namespace EasyMirai.CSharp.Example
             return ms;
         }
 
-        static double Test2()
+        static double Test4()
         {
             Console.WriteLine($"Running Default Serialize");
 
             var startTime = DateTime.Now;
 
+            using var memoryStream = new MemoryStream();
             for (var i = 0; i < 100000; ++i)
             {
-                var result = JsonSerializer.Serialize(groupMessage);
+                var writer = new Utf8JsonWriter(memoryStream);
+                JsonSerializer.Serialize(writer, groupMessage);
+                memoryStream.Seek(0, SeekOrigin.Begin);
             }
             var endTime = DateTime.Now;
             var deltaTime = endTime - startTime;
