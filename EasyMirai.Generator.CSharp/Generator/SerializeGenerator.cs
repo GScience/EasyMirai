@@ -36,12 +36,18 @@ namespace EasyMirai.Generator.CSharp.Generator
             SerializableClasses.Clear();
         }
 
+        MessageGenerator _messageGenerator;
+        EventGenerator _eventGenerator;
+
         /// <summary>
         /// 生成序列化代码
         /// </summary>
         /// <param name="sources"></param>
         public override void PostProcessing(Dictionary<string, string> sources)
         {
+            _messageGenerator = SourceGeneratorTable[MiraiModule.CategoryMessage] as MessageGenerator;
+            _eventGenerator = SourceGeneratorTable[MiraiModule.CategoryEvent] as EventGenerator;
+
             var source = GenerateSourceHead();
 
             if (GenerateSerializeSource)
@@ -88,6 +94,24 @@ namespace {RootNamespace}
         {{
             public ConverterWrapper<T> DefaultConverter {{ get; }}
         }}
+
+        public interface ISerializableMessage
+        {{
+            string Type {{ get; }}
+        }}
+
+        public interface ISerializableEvent
+        {{
+            string Type {{ get; }}
+        }}
+
+        {GenMessageDeserializerCode()}
+
+        {GenMessageSerializerCode()}
+
+        {GenEventSerializerCode()}
+
+        {GenEventDeserializerCode()}
     }}
 }}";
             }
@@ -105,6 +129,100 @@ namespace {RootNamespace}
 }}";
             }
             sources[MiraiSource.GetOutputFileName(SerializerClassName, "Util")] = source;
+        }
+        private string GenMessageSerializerCode()
+        {
+            var messageTable = _messageGenerator.MessageTable;
+
+            var switchBodyCode = string.Join(Environment.NewLine, messageTable.Select(pair => $@"
+                case ""{pair.Key.Name.ToUpperCamel()}"":
+                    {GetClassConverterName(pair.Key)}.Write(writer, ({pair.Key.FullName})message);
+                    break;"));
+
+            var source = $@"
+        public static void WriteISerializableMessage(Utf8JsonWriter writer, ISerializableMessage message)
+        {{
+            switch (message.Type)
+            {{
+                {switchBodyCode}
+                
+                default:
+                    throw new NotImplementedException();
+            }}
+        }}";
+            return source;
+        }
+
+        private string GenMessageDeserializerCode()
+        {
+            var messageTable = _messageGenerator.MessageTable;
+
+            var switchBodyCode = string.Join(Environment.NewLine, messageTable.Select(pair => $@"
+                case ""{pair.Value}"":
+                    var obj{pair.Value} = new {pair.Key.FullName}();
+                    {GetClassConverterName(pair.Key)}.Read(ref reader, obj{pair.Value});
+                    return (ISerializableMessage)obj{pair.Value};"));
+
+            var source = $@"
+        public static ISerializableMessage ReadISerializableMessage(ref Utf8JsonReader reader)
+        {{
+            var type = GetJsonObjectType(reader);
+            switch (type)
+            {{
+                {switchBodyCode}
+                
+                default:
+                    throw new NotImplementedException();
+            }}
+        }}";
+            return source;
+        }
+        private string GenEventSerializerCode()
+        {
+            var eventTable = _eventGenerator.EventTable;
+
+            var switchBodyCode = string.Join(Environment.NewLine, eventTable.Select(pair => $@"
+                case ""{pair.Key.Name.ToUpperCamel()}"":
+                    {GetClassConverterName(pair.Key)}.Write(writer, ({pair.Key.FullName})e);
+                    break;"));
+
+            var source = $@"
+        public static void WriteISerializableEvent(Utf8JsonWriter writer, ISerializableEvent e)
+        {{
+            switch (e.Type)
+            {{
+                {switchBodyCode}
+                
+                default:
+                    throw new NotImplementedException();
+            }}
+        }}";
+            return source;
+        }
+
+        private string GenEventDeserializerCode()
+        {
+            var eventTable = _eventGenerator.EventTable;
+
+            var switchBodyCode = string.Join(Environment.NewLine, eventTable.Select(pair => $@"
+                case ""{pair.Value}"":
+                    var obj{pair.Value} = new {pair.Key.FullName}();
+                    {GetClassConverterName(pair.Key)}.Read(ref reader, obj{pair.Value});
+                    return (ISerializableEvent)obj{pair.Value};"));
+
+            var source = $@"
+        public static ISerializableEvent ReadISerializableEvent(ref Utf8JsonReader reader)
+        {{
+            var type = GetJsonObjectType(reader);
+            switch (type)
+            {{
+                {switchBodyCode}
+                
+                default:
+                    throw new NotImplementedException();
+            }}
+        }}";
+            return source;
         }
 
         private string GenWriteValueSource(MemberDef m, bool isListComponent = false, string listComponentName = "")
@@ -148,7 +266,7 @@ namespace {RootNamespace}
                 if (value.{m.Name.ToUpperCamel()} != null)
                 {{
                     foreach (var element in value.{m.Name.ToUpperCamel()})
-                        {GenWriteValueSource(m, true, "element")};
+                        {GenWriteValueSource(m, true, "element")}
                 }}
                 writer.WriteEndArray();";
                     break;
@@ -263,6 +381,14 @@ namespace {RootNamespace}
 
             var writePropertyClassSource = string.Join(Environment.NewLine, classDef.Members.Values.Select(GenWritePropertyClassSource));
 
+            // 消息或者事件需要额外写入type
+            var writeMessageOrEventType = "";
+
+            if (_messageGenerator.MessageTable.TryGetValue(classDef, out var typeName))
+                writeMessageOrEventType = $@"
+                writer.WritePropertyName(""type"");
+                writer.WriteStringValue(""{typeName}"");";
+
             var converterSource = $@"
         internal static class {GetClassConverterName(classDef)}
         {{
@@ -308,7 +434,7 @@ namespace {RootNamespace}
                     writer.WriteNullValue();
                     return;
                 }}
-                writer.WriteStartObject();{writePropertyClassSource}
+                writer.WriteStartObject();{writeMessageOrEventType}{writePropertyClassSource}
                 writer.WriteEndObject();
             }}
         }}";

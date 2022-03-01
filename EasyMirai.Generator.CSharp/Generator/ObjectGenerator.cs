@@ -24,7 +24,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        public static string GenClassSource(ClassDef classDef, int depth = 0)
+        public static string GenClassSource(ClassDef classDef, int depth = 0, string extraCode = "", string extraInterface = "")
         {
             var newLine = Environment.NewLine + new string('\t', depth);
 
@@ -40,9 +40,10 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
-                // 保留JsonPropertyName以支持c#内置json序列化方式
+                // 不再支持自带的json序列化，因为无法找到好的处理IMessage的type的方法
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
-                var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
+                //var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
+                var jsonPropertyName = "";
                 return
                     $"{newLine}\t{memberComment}" +
                     $"{newLine}\t{jsonPropertyName}" +
@@ -57,7 +58,7 @@ namespace EasyMirai.Generator.CSharp.Generator
                     : "";
             var classConverterGetterSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"[JsonIgnore] public {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
+                    ? $"public {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
                     : "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
@@ -67,14 +68,19 @@ namespace EasyMirai.Generator.CSharp.Generator
                     ? $"{(string.IsNullOrEmpty(baseClassSource) ? " :" : ",")} {SerializeGenerator.SerializerClassName}.ISerializable<{classDef.FullName}>"
                     : "";
 
+            if (!string.IsNullOrEmpty(extraInterface))
+                extraInterface = " , " + extraInterface;
+
             string source =
                 $"{newLine}{classComment}" +
-                $"{newLine}public class {classDef.Name}{baseClassSource}{classSerializable}" +
+                $"{newLine}public class {classDef.Name}{baseClassSource}{classSerializable}{extraInterface}" +
                 $"{newLine}{{" +
                 // Converter
                 $"{newLine}\t{classConverterDefineSource}" +
                 $"{newLine}\t{classConverterGetterSource}" +
                 $"{newLine}" +
+                // Extra
+                $"{newLine}{extraCode}" +
                 // 成员定义
                 $"{newLine}#region Members" +
                 $"{newLine}{string.Join(Environment.NewLine, memberDefs)}" + 
@@ -89,6 +95,14 @@ namespace EasyMirai.Generator.CSharp.Generator
             SerializeGenerator.SerializableClasses.Add(classDef);
 
             return source;
+        }
+        protected virtual string GenerateExtraCode(ClassDef classDef)
+        {
+            return "";
+        }
+        protected virtual string GenerateExtraInterface(ClassDef classDef)
+        {
+            return "";
         }
 
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
@@ -107,7 +121,7 @@ namespace {namespaceDef}
 {{
     /// <remarks>
     /// Version: {classDef.Version}
-    /// </remarks> { GenClassSource(classDef, 1) }
+    /// </remarks> { GenClassSource(classDef, 1, GenerateExtraCode(classDef), GenerateExtraInterface(classDef)) }
 }}
 ";
             return source;

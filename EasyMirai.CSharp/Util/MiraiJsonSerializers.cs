@@ -15,20 +15,29 @@ namespace EasyMirai.CSharp.Util
         {
             public static void Write(Utf8JsonWriter writer, IMessage value)
             {
-                writer.WriteStartObject();
-                writer.WriteEndObject();
+                WriteISerializableMessage(writer, (ISerializableMessage)value);
             }
 
             public static IMessage Read(ref Utf8JsonReader reader)
             {
-                while(reader.Read())
-                {
-                    if (reader.TokenType == JsonTokenType.EndObject)
-                        break;
-                }
-                return null;
+                var reader2 = reader;
+                reader2.Read();
+                return (IMessage)ReadISerializableMessage(ref reader);
             }
         }
+
+        /// <summary>
+        /// 获取Json对象类型
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <returns></returns>
+        internal static string GetJsonObjectType(Utf8JsonReader reader)
+        {
+            var jsonDocument = JsonDocument.ParseValue(ref reader);
+            var type = jsonDocument.RootElement.GetProperty("type").GetString();
+            return type!;
+        }
+
         public partial class ConverterWrapper<T> where T : ISerializable<T>, new()
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
