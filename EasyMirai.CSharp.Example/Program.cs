@@ -14,7 +14,17 @@ var session = await Session.CreateSessionAsync(config);
 session.Start();
 
 
-var about = await session.WsAdapter.AboutAsync();
+var startTime = DateTime.Now;
+
+for (var i = 0; i < 10; ++i)
+{
+    var about = await session.WsAdapter.AboutAsync();
+}
+
+var endTime = DateTime.Now;
+var deltaTime = endTime - startTime;
+
+Console.WriteLine($"Do About Command 10 times in {deltaTime.TotalMilliseconds}ms");
 
 while (true) ;
 

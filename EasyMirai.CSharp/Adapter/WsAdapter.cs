@@ -195,7 +195,7 @@ namespace EasyMirai.CSharp.Adapter
             var syncId = _currentSyncId++;
             var package = new RequestPackage<TRequest>(syncId, cmd, null, request);
 
-            // Send request first
+            // Send request
             WriteWsRequestPackage(arrayBuffer, package);
             bool lockWasTaken = false;
             try
