@@ -34,22 +34,22 @@ namespace EasyMirai.CSharp.Adapter
         }
 
         /// <summary>
-        /// 消息块
+        /// Websocket缓存段
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        internal class MemoryChunk<T> : ReadOnlySequenceSegment<T>, IDisposable
+        internal class WsBufferSegmentSegment<T> : ReadOnlySequenceSegment<T>, IDisposable
         {
-            private IMemoryOwner<T> _memoryOwner;
+            private readonly IMemoryOwner<T> _memoryOwner;
 
-            public MemoryChunk(IMemoryOwner<T> memoryOwner, int start, int length)
+            public WsBufferSegmentSegment(IMemoryOwner<T> memoryOwner, int start, int length)
             {
                 _memoryOwner = memoryOwner;
                 Memory = _memoryOwner.Memory.Slice(start, length);
             }
 
-            public MemoryChunk<T> Add(IMemoryOwner<T> memoryOwner, int start, int length, int runningIndex)
+            public WsBufferSegmentSegment<T> Add(IMemoryOwner<T> memoryOwner, int start, int length, int runningIndex)
             {
-                var segment = new MemoryChunk<T>(memoryOwner, start, length)
+                var segment = new WsBufferSegmentSegment<T>(memoryOwner, start, length)
                 {
                     RunningIndex = runningIndex
                 };
@@ -60,13 +60,36 @@ namespace EasyMirai.CSharp.Adapter
 
             public void Dispose()
             {
-                if (Next is MemoryChunk<T> chunk)
+                if (Next is WsBufferSegmentSegment<T> chunk)
                     chunk.Dispose();
+                _memoryOwner.Dispose();
+                GC.SuppressFinalize(this);
             }
         }
+        /// <summary>
+        /// websocket缓存序列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        internal class WsBufferSequence<T> : IDisposable
+        {
+            private readonly WsBufferSegmentSegment<T>? _start;
+            public readonly ReadOnlySequence<T> Sequence;
 
-        public const int MemoryBufferSize = 8;
+            public WsBufferSequence(WsBufferSegmentSegment<T>? start, int startIndex, WsBufferSegmentSegment<T>? end, int endIndex)
+            {
+                _start = start;
+                if (start == null || end == null)
+                    Sequence = new ReadOnlySequence<T>();
+                else
+                    Sequence = new ReadOnlySequence<T>(start, startIndex, end, endIndex);
+            }
 
+            public void Dispose()
+            {
+                _start?.Dispose();
+                GC.SuppressFinalize(this);
+            }
+        }
         private ClientWebSocket _wsClient = new();
 
         internal WsAdapter() { }
@@ -74,33 +97,32 @@ namespace EasyMirai.CSharp.Adapter
         /// <summary>
         /// 从Ws中拉取
         /// </summary>
-        private async Task<ReadOnlySequence<byte>> PollFromWebSocketAsync(CancellationToken cancellation)
+        private async Task<WsBufferSequence<byte>> PollFromWebSocketAsync(CancellationToken cancellation)
         {
-            MemoryChunk<byte>? begin = null;
-            MemoryChunk<byte>? current = null;
-            int currentLength = 0;
-            int runningIndex = 0;
+            WsBufferSegmentSegment<byte>? begin = null;
+            WsBufferSegmentSegment<byte>? current = null;
+            int currentReceivedCount = 0;
+            int totalReceivedCount = 0;
 
             while (!cancellation.IsCancellationRequested)
             {
-                var memoryBuffer = MemoryPool<byte>.Shared.Rent(MemoryBufferSize);
-                var receiveResult = await _wsClient.ReceiveAsync(memoryBuffer.Memory, cancellation);
+                var receiveBuffer = MemoryPool<byte>.Shared.Rent();
+                var receiveResult = await _wsClient.ReceiveAsync(receiveBuffer.Memory, cancellation);
 
-                currentLength = receiveResult.Count;
+                currentReceivedCount = receiveResult.Count;
                 if (current == null)
                 {
-                    begin = new MemoryChunk<byte>(memoryBuffer, 0, currentLength);
+                    begin = new WsBufferSegmentSegment<byte>(receiveBuffer, 0, currentReceivedCount);
                     current = begin;
                 }
                 else
-                    current = current.Add(memoryBuffer, 0, currentLength, runningIndex);
-                runningIndex += currentLength;
+                    current = current.Add(receiveBuffer, 0, currentReceivedCount, totalReceivedCount);
+                totalReceivedCount += currentReceivedCount;
                 if (receiveResult.EndOfMessage)
                     break;
             }
 
-            var readOnlySequences = new ReadOnlySequence<byte>(begin!, 0, current!, currentLength);
-            return readOnlySequences;
+            return new WsBufferSequence<byte>(begin, 0, current, currentReceivedCount);
         }
 
         /// <summary>
@@ -152,10 +174,10 @@ namespace EasyMirai.CSharp.Adapter
             if (!string.IsNullOrEmpty(sessionKey))
                 wsAdapter._wsClient.Options.SetRequestHeader("sessionKey", sessionKey);
             await wsAdapter._wsClient.ConnectAsync(new Uri($"ws://{config.Host}:{config.Port}/all"), cancellation);
-            var response = await wsAdapter.PollFromWebSocketAsync(cancellation);
+            using var response = await wsAdapter.PollFromWebSocketAsync(cancellation);
             
-            var responseObj = ReadWsPackage<Verify.Response>(response);
-
+            var responseObj = ReadWsPackage<Verify.Response>(response.Sequence);
+            
             return wsAdapter;
         }
 
