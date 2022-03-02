@@ -21,7 +21,7 @@ namespace EasyMirai.CSharp
         /// 从配置中创建Session
         /// </summary>
         /// <param name="config"></param>
-        public async static Task<Session> CreateSessionAsync(MiraiConfig config)
+        public static Session CreateSession(MiraiConfig config)
         {
             var session = new Session();
             // 创建Adapter
@@ -30,25 +30,29 @@ namespace EasyMirai.CSharp
                 switch (adapter)
                 {
                     case AdapterTypes.Ws:
-                        if (session.HttpAdapter == null)
-                            session.WsAdapter = await WsAdapter.CreateAsync(config, CancellationToken.None);
-                        else
-                            session.WsAdapter = await WsAdapter.CreateAsync(config, session.HttpAdapter.sessionKey, CancellationToken.None);
+                        session.WsAdapter = new WsAdapter(config);
                         break;
                     case AdapterTypes.Http:
-                        if (session.WsAdapter == null)
-                            session.HttpAdapter = new HttpAdapter(config);
-                        else
-                            session.HttpAdapter = new HttpAdapter(session.WsAdapter.sessionKey);
+                        session.HttpAdapter = new HttpAdapter(config);
                         break;
                 }
             }
             return session;
         }
 
-        public void Start()
+        public async Task Start()
         {
-            WsAdapter?.Start(CancellationToken.None);
+            // 如果有WebSocket，则从WebSocket创建Session
+            if (WsAdapter != null)
+            {
+                await WsAdapter.StartAsync(CancellationToken.None);
+                if (HttpAdapter != null)
+                    HttpAdapter.sessionKey = WsAdapter.sessionKey;
+            }
+            else if (HttpAdapter != null)
+            {
+                await HttpAdapter.StartAsync(CancellationToken.None);
+            }
         }
 
         public void Dispose()

@@ -17,7 +17,7 @@
 	</response>
 
 	<adapter>
-		<http cmd="/groupList" method="Post" desc="使用此方法获取bot的群列表"/>
+		<http cmd="/groupList" method="Get" desc="使用此方法获取bot的群列表"/>
 		<ws cmd="groupList" desc="使用此方法获取bot的群列表"/>
 	</adapter>
 </api>

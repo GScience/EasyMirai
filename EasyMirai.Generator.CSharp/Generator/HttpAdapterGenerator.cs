@@ -33,6 +33,21 @@ namespace EasyMirai.Generator.CSharp.Generator
             }
         }
 
+        /// <summary>
+        /// 获取命令，Get方法直接把参数写到cmd里
+        /// </summary>
+        /// <returns></returns>
+        public string GetCommandSource(ClassDef requestClassDef, string cmd, string method)
+        {
+            if (method == "Post")
+                return cmd;
+
+            var argsSource = string.Join("&", requestClassDef.Members.Values.Select(m => $"{m.Name.ToLowerCamel()}={{ request.{m.Name.ToUpperCamel()} }}"));
+            if (string.IsNullOrEmpty(argsSource))
+                return cmd;
+            return $"{cmd}?{argsSource}";
+        }
+
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             // 列表查找IFunction命令
@@ -56,7 +71,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async(Api.{api.apiDef.Name}.Request request)
         {{
             return await SendAsync<Api.{api.apiDef.Name}.Request, Api.{api.apiDef.Name}.Response>(
-                request, ""{api.cmd}"", ""{api.method}"", ""{api.contentType}""); 
+                request, $""{GetCommandSource(requestClassDef, api.cmd, api.method)}"", ""{api.method}"", ""{api.contentType}""); 
         }}";
 
                 // 拆开参数逐个输出

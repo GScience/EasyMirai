@@ -1,7 +1,10 @@
 ﻿using EasyMirai.CSharp.Util;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -10,7 +13,9 @@ namespace EasyMirai.CSharp.Adapter
 {
     public partial class HttpAdapter : IDisposable
     {
-        MemoryStream testStream = new();
+        private HttpClient _httpClient = new();
+
+        private MiraiConfig _config;
 
         /// <summary>
         /// 发送请求
@@ -25,31 +30,44 @@ namespace EasyMirai.CSharp.Adapter
             where TRequest : MiraiJsonSerializers.ISerializable<TRequest>, new()
             where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
-            var writer = new Utf8JsonWriter(testStream);
-            request.DefaultConverter.Write(writer, request);
-            writer.Flush();
-            var requestJson = Encoding.UTF8.GetString(testStream.ToArray());
-            testStream.Seek(0, SeekOrigin.Begin);
+            HttpResponseMessage response;
 
-            var response = new TResponse();
-            response.DefaultConverter.Read("{}", response);
-            if (response == null)
-                throw new Exception("Failed to deserialize object");
-            return response;
+            if (method == "Post")
+            {
+                var arrayBuffer = new ArrayBufferWriter<byte>();
+                var writer = new Utf8JsonWriter(arrayBuffer);
+                request.DefaultConverter.Write(writer, request);
+                writer.Flush();
+                var httpContent = new ReadOnlyMemoryContent(arrayBuffer.WrittenMemory);
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+                response = await _httpClient.PostAsync($"http://{_config.Host}:{_config.Port}{cmd}", httpContent);
+            }
+            else if (method == "Get")
+            {
+                response = await _httpClient.GetAsync($"http://{_config.Host}:{_config.Port}{cmd}");
+            }
+            else
+                throw new NotImplementedException();
+
+            var responseObj = new TResponse();
+            using var responseStream = response.Content.ReadAsStream();
+            using var responseReader = new StreamReader(responseStream);
+
+            responseObj.DefaultConverter.Read(await responseReader.ReadToEndAsync(), responseObj);
+            return responseObj;
         }
 
-        public HttpAdapter(MiraiConfig config)
+        public async Task StartAsync(CancellationToken token)
         {
-
+            var verifyResponse = await VerifyAsync(_config.VerifyKey);
+            sessionKey = verifyResponse.Session;
+            var bindResponse = await BindAsync(_config.Id);
         }
 
-        /// <summary>
-        /// 由已建立的连接创建
-        /// </summary>
-        /// <param name="key"></param>
-        public HttpAdapter(string key)
+        internal HttpAdapter(MiraiConfig config)
         {
-            sessionKey = key;
+            _config = config;
         }
 
         public void Dispose()

@@ -18,6 +18,8 @@ namespace EasyMirai.CSharp.Adapter
     /// </summary>
     public partial class WsAdapter : IDisposable
     {
+        private MiraiConfig _config;
+
         public MiraiJsonSerializers.EventSerializeHookTable EventHookTable = new();
 
         /// <summary>
@@ -127,7 +129,10 @@ namespace EasyMirai.CSharp.Adapter
         /// </summary>
         private ushort _currentSyncId = 1;
 
-        internal WsAdapter() { }
+        internal WsAdapter(MiraiConfig config) 
+        {
+            _config = config;
+        }
 
         /// <summary>
         /// 从Ws中拉取
@@ -164,22 +169,35 @@ namespace EasyMirai.CSharp.Adapter
         /// 启动WsAdapter
         /// </summary>
         /// <returns></returns>
-        public async Task Start(CancellationToken cancellation)
+        public async Task StartAsync(CancellationToken cancellation)
+        {
+            _wsClient.Options.SetRequestHeader("verifyKey", _config.VerifyKey);
+            _wsClient.Options.SetRequestHeader("qq", _config.Id.ToString());
+            await _wsClient.ConnectAsync(new Uri($"ws://{_config.Host}:{_config.Port}/all"), cancellation);
+            using var verifyResponse = await PollFromWebSocketAsync(cancellation);
+
+            var verifyResponseObj = ReadWsResponcePackage<Verify.Response>(verifyResponse.Sequence);
+            sessionKey = verifyResponseObj.Data.Session;
+
+            _ = Task.Factory.StartNew(() => EventLoop(cancellation), cancellation);
+        }
+
+        private async void EventLoop(CancellationToken cancellation)
         {
             while (!cancellation.IsCancellationRequested)
             {
                 try
                 {
-                    using var response = await PollFromWebSocketAsync(cancellation);
-                    var testStr = Encoding.UTF8.GetString(response.Sequence);
-                    var syncId = GetSyncId(response.Sequence);
+                    using var loopResponse = await PollFromWebSocketAsync(cancellation);
+                    var testStr = Encoding.UTF8.GetString(loopResponse.Sequence);
+                    var syncId = GetSyncId(loopResponse.Sequence);
                     if (syncId == -1)
-                        ReadWsEvent(response.Sequence, EventHookTable);
+                        ReadWsEvent(loopResponse.Sequence, EventHookTable);
                     else
                     {
                         var ushortSyncId = (ushort)syncId;
                         if (_syncResponseTable.TryGetValue(ushortSyncId, out var result))
-                            result(response);
+                            result(loopResponse);
                     }
                 }
                 catch (Exception ex)
@@ -240,38 +258,6 @@ namespace EasyMirai.CSharp.Adapter
                 throw new Exception();
 
             return response.Value.Data;
-        }
-
-        /// <summary>
-        /// 从配置中创建WsAdapter
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="cancellation"></param>
-        /// <returns></returns>
-        public static async Task<WsAdapter> CreateAsync(MiraiConfig config, CancellationToken cancellation)
-        {
-            return await CreateAsync(config, "", cancellation);
-        }
-        
-        /// <summary>
-        /// 从已有SessionKey中创建WsAdapter
-        /// </summary>
-        /// <param name="config"></param>
-        /// <param name="cancellation"></param>
-        /// <returns></returns>
-        public static async Task<WsAdapter> CreateAsync(MiraiConfig config, string sessionKey, CancellationToken cancellation)
-        {
-            WsAdapter wsAdapter = new();
-            wsAdapter._wsClient.Options.SetRequestHeader("verifyKey", config.VerifyKey);
-            wsAdapter._wsClient.Options.SetRequestHeader("qq", config.Id.ToString());
-            if (!string.IsNullOrEmpty(sessionKey))
-                wsAdapter._wsClient.Options.SetRequestHeader("sessionKey", sessionKey);
-            await wsAdapter._wsClient.ConnectAsync(new Uri($"ws://{config.Host}:{config.Port}/all"), cancellation);
-            using var response = await wsAdapter.PollFromWebSocketAsync(cancellation);
-
-            var responseObj = ReadWsResponcePackage<Verify.Response>(response.Sequence);
-            sessionKey = responseObj.Data.Session;
-            return wsAdapter;
         }
 
         /// <summary>
@@ -392,7 +378,6 @@ namespace EasyMirai.CSharp.Adapter
                                 return syncId;
                             return -1;
                         }
-                        return -1;
                     case JsonTokenType.StartObject:
                         ++depth;
                         break;

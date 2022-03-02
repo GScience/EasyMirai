@@ -10,36 +10,20 @@ using System.Text.Json.Serialization.Metadata;
 using EasyMirai.CSharp;
 
 var config = MiraiConfig.FromFile("config.json");
-var session = await Session.CreateSessionAsync(config);
-session.Start();
+var session = Session.CreateSession(config);
+await session.Start();
 
-var startTime = DateTime.Now;
+var aboutWs = await session.WsAdapter.AboutAsync();
+var aboutHttp = await session.HttpAdapter.AboutAsync();
+var groupListWs = await session.WsAdapter.GroupListAsync();
+var groupListHttp = await session.HttpAdapter.GroupListAsync();
 
-for (var i = 0; i < 10; ++i)
+session.WsAdapter.EventHookTable.GroupMessage = async (groupMessage) =>
 {
-    var about = await session.WsAdapter.AboutAsync();
-}
-
-var endTime = DateTime.Now;
-var deltaTime = endTime - startTime;
-
-Console.WriteLine($"Do About Command 10 times in {deltaTime.TotalMilliseconds}ms");
-
-startTime = DateTime.Now;
-
-for (var i = 0; i < 10; ++i)
-{
-    var groupList = await session.WsAdapter.GroupListAsync();
-}
-
-endTime = DateTime.Now;
-deltaTime = endTime - startTime;
-
-Console.WriteLine($"Do GroupList Command 10 times in {deltaTime.TotalMilliseconds}ms");
-
-session.WsAdapter.EventHookTable.FriendMessage = async (friendMessage) =>
-{
-    await session.WsAdapter.SendFriendMessageAsync(friendMessage.Sender.Id, friendMessage.MessageChain);
+    foreach (var msg in groupMessage.MessageChain)
+        if (msg is PlainMessage plainMessage &&
+            plainMessage.Text == "犊子测试机呢")
+            await session.WsAdapter.SendGroupMessageAsync(groupMessage.Sender.Group.Id, new List<IMessage>() { new PlainMessage { Text = "在这呢~" } });
 };
 
 while (true)
