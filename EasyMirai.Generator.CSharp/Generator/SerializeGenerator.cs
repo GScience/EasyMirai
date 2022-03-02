@@ -92,7 +92,7 @@ namespace {RootNamespace}
         }}
         public interface ISerializable<T> where T : ISerializable<T>, new()
         {{
-            public ConverterWrapper<T> DefaultConverter {{ get; }}
+            ConverterWrapper<T> DefaultConverter {{ get; }}
         }}
 
         public interface ISerializableMessage
@@ -122,7 +122,7 @@ using System.Text.Json;
 
 namespace {RootNamespace}
 {{
-    public static partial class {SerializerClassName}
+    internal static partial class {SerializerClassName}
     {{
         
     }}
@@ -140,7 +140,7 @@ namespace {RootNamespace}
                     break;"));
 
             var source = $@"
-        public static void WriteISerializableMessage(Utf8JsonWriter writer, ISerializableMessage message)
+        internal static void WriteISerializableMessage(Utf8JsonWriter writer, ISerializableMessage message)
         {{
             switch (message.Type)
             {{
@@ -164,7 +164,7 @@ namespace {RootNamespace}
                     return (ISerializableMessage)obj{pair.Value};"));
 
             var source = $@"
-        public static ISerializableMessage ReadISerializableMessage(ref Utf8JsonReader reader)
+        internal static ISerializableMessage ReadISerializableMessage(ref Utf8JsonReader reader)
         {{
             var type = GetJsonObjectType(reader);
             switch (type)
@@ -187,7 +187,7 @@ namespace {RootNamespace}
                     break;"));
 
             var source = $@"
-        public static void WriteISerializableEvent(Utf8JsonWriter writer, ISerializableEvent e)
+        internal static void WriteISerializableEvent(Utf8JsonWriter writer, ISerializableEvent e)
         {{
             switch (e.Type)
             {{
@@ -211,7 +211,7 @@ namespace {RootNamespace}
                     return (ISerializableEvent)obj{pair.Value};"));
 
             var source = $@"
-        public static ISerializableEvent ReadISerializableEvent(ref Utf8JsonReader reader)
+        internal static ISerializableEvent ReadISerializableEvent(ref Utf8JsonReader reader)
         {{
             var type = GetJsonObjectType(reader);
             switch (type)

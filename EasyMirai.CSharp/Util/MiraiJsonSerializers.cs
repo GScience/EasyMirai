@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
+using System.Buffers;
 using System.Threading.Tasks;
 using EasyMirai.CSharp.Message;
 
@@ -41,9 +42,25 @@ namespace EasyMirai.CSharp.Util
         public partial class ConverterWrapper<T> where T : ISerializable<T>, new()
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Read(ReadOnlySequence<byte> data, T obj)
+            {
+                var reader = new Utf8JsonReader(data);
+                ReadHandler(ref reader, obj);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public void Read(ref Utf8JsonReader reader, T obj)
             {
                 ReadHandler(ref reader, obj);
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public T Read(ReadOnlySequence<byte> data)
+            {
+                var reader = new Utf8JsonReader(data);
+                var obj = new T();
+                ReadHandler(ref reader, obj);
+                return obj;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

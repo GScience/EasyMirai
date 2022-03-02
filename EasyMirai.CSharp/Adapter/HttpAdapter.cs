@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EasyMirai.CSharp.Adapter
 {
-    public partial class HttpAdapter
+    public partial class HttpAdapter : IDisposable
     {
         MemoryStream testStream = new();
 
@@ -35,6 +35,25 @@ namespace EasyMirai.CSharp.Adapter
             if (response == null)
                 throw new Exception("Failed to deserialize object");
             return response;
+        }
+
+        public HttpAdapter(MiraiConfig config)
+        {
+
+        }
+
+        /// <summary>
+        /// 由已建立的连接创建
+        /// </summary>
+        /// <param name="key"></param>
+        public HttpAdapter(string key)
+        {
+            sessionKey = key;
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

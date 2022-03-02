@@ -25,12 +25,11 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             var type = classDef.ConstString["Type"].value;
             return $@"
-        public string Type => ""{type}"";";
+        [JsonPropertyName(""Type"")] public string Type => ""{type}"";";
         }
 
         protected override string GenerateExtraInterface(ClassDef classDef)
         {
-            var type = classDef.ConstString["Type"].value;
             return $@"MiraiJsonSerializers.ISerializableMessage";
         }
 

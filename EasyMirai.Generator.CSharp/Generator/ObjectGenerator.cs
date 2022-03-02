@@ -40,10 +40,9 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 成员定义
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
-                // 不再支持自带的json序列化，因为无法找到好的处理IMessage的type的方法
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
-                //var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
-                var jsonPropertyName = "";
+                var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
+
                 return
                     $"{newLine}\t{memberComment}" +
                     $"{newLine}\t{jsonPropertyName}" +
@@ -58,7 +57,7 @@ namespace EasyMirai.Generator.CSharp.Generator
                     : "";
             var classConverterGetterSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"public {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
+                    ? $"[JsonIgnore] public {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
                     : "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";

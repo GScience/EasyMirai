@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Verify"
+	 desc="认证" >
+	<request>
+		<val name="verifyKey" type="String" desc="创建Mirai-Http-Server时生成的key，可在启动时指定或随机生成"/>
+	</request>
+	<response>
+		<val name="code" type="Int" desc="返回状态码"/>
+		<val name="session" type="String" desc="你的session key"/>
+	</response>
+	<adapter>
+		<http cmd="/verify" method="Post" desc="使用此方法验证你的身份，并返回一个会话"/>
+	</adapter>
+</api>

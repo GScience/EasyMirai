@@ -1,5 +1,4 @@
 ﻿using EasyMirai.CSharp.Adapter;
-using EasyMirai.CSharp.Example;
 using EasyMirai.CSharp.Message;
 using EasyMirai.CSharp.Util;
 using EasyMirai.CSharp.Event;
@@ -8,12 +7,12 @@ using System.Text.Json.Serialization;
 using System;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;
+using EasyMirai.CSharp;
 
-WsAdapter test = new();
-var response = test.SendFriendMessageAsync(123, new List<IMessage>()).Result;
+var config = MiraiConfig.FromFile("config.json");
+var session = await Session.CreateSessionAsync(config);
 
-JsonTest.TestMain();
 
-Utf8JsonReader reader = new Utf8JsonReader();
+while (true) ;
 
 return;

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Bind"
+	 desc="绑定" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="qq" type="Long" desc="Session将要绑定的Bot的qq号"/>
+	</request>
+	<response>
+		<val name="code" type="Int" desc="返回状态码"/>
+		<val name="msg" type="String" desc="返回消息"/>
+	</response>
+	<adapter>
+		<http cmd="/bind" method="Post" desc="使用此方法校验并激活你的Session，同时将Session与一个已登录的Bot绑定"/>
+	</adapter>
+</api>
