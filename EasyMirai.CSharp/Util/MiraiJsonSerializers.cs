@@ -35,7 +35,6 @@ namespace EasyMirai.CSharp.Util
         internal static string GetJsonObjectType(Utf8JsonReader reader)
         {
             int depth = 0;
-            reader.Read();
 
             while (true)
             {

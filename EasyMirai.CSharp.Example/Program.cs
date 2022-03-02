@@ -37,6 +37,12 @@ deltaTime = endTime - startTime;
 
 Console.WriteLine($"Do GroupList Command 10 times in {deltaTime.TotalMilliseconds}ms");
 
-while (true) ;
+session.WsAdapter.EventHookTable.FriendMessage = async (friendMessage) =>
+{
+    await session.WsAdapter.SendFriendMessageAsync(friendMessage.Sender.Id, friendMessage.MessageChain);
+};
 
-return;
+while (true)
+{
+    Console.ReadLine();
+}

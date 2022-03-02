@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message 
+	xmlns="http://tempuri.org/Mirai.xsd" 
+	name="File"
+	desc="文件消息">
+	<val name="id" type="String" desc="文件识别id"/>
+	<val name="name" type="String" desc="文件名"/>
+	<val name="size" type="Long" desc="文件大小"/>
+</message>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyMirai.CSharp.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,8 @@ namespace EasyMirai.CSharp.Adapter
         /// <param name="method"></param>
         /// <param name="contentType"></param>
         private async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd, string method, string contentType)
-            where TRequest : Util.MiraiJsonSerializers.ISerializable<TRequest>, new()
-            where TResponse : Util.MiraiJsonSerializers.ISerializable<TResponse>, new()
+            where TRequest : MiraiJsonSerializers.ISerializable<TRequest>, new()
+            where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
             var writer = new Utf8JsonWriter(testStream);
             request.DefaultConverter.Write(writer, request);

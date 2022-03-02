@@ -18,6 +18,8 @@ namespace EasyMirai.CSharp.Adapter
     /// </summary>
     public partial class WsAdapter : IDisposable
     {
+        public MiraiJsonSerializers.EventSerializeHookTable EventHookTable = new();
+
         /// <summary>
         /// Ws 响应包
         /// </summary>
@@ -166,17 +168,24 @@ namespace EasyMirai.CSharp.Adapter
         {
             while (!cancellation.IsCancellationRequested)
             {
-                using var response = await PollFromWebSocketAsync(cancellation);
-                var syncId = GetSyncId(response.Sequence);
-                if (syncId == -1)
+                try
                 {
-
+                    using var response = await PollFromWebSocketAsync(cancellation);
+                    var testStr = Encoding.UTF8.GetString(response.Sequence);
+                    var syncId = GetSyncId(response.Sequence);
+                    if (syncId == -1)
+                        ReadWsEvent(response.Sequence, EventHookTable);
+                    else
+                    {
+                        var ushortSyncId = (ushort)syncId;
+                        if (_syncResponseTable.TryGetValue(ushortSyncId, out var result))
+                            result(response);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    var ushortSyncId = (ushort)syncId;
-                    if (_syncResponseTable.TryGetValue(ushortSyncId, out var result))
-                        result(response);
+                    // Log error
+                    Console.WriteLine(ex);
                 }
             }
         }
@@ -197,6 +206,7 @@ namespace EasyMirai.CSharp.Adapter
 
             // Send request
             WriteWsRequestPackage(arrayBuffer, package);
+            var str = Encoding.UTF8.GetString(arrayBuffer.WrittenSpan);
             bool lockWasTaken = false;
             try
             {
@@ -323,6 +333,36 @@ namespace EasyMirai.CSharp.Adapter
                 }
             }
             return new ResponsePackage<T>(syncId, obj);
+        }
+
+        /// <summary>
+        /// 读取 Websock 数据包
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        private static object ReadWsEvent(ReadOnlySequence<byte> sequence, MiraiJsonSerializers.EventSerializeHookTable EventHookTable)
+        {
+            var reader = new Utf8JsonReader(sequence);
+
+            // object begin
+            reader.Read();
+            while (true)
+            {
+                // property name or end object
+                reader.Read();
+
+                var propertyName = reader.GetString();
+                reader.Read();
+                switch (propertyName)
+                {
+                    case "data":
+                        return MiraiJsonSerializers.ReadISerializableEvent(ref reader, EventHookTable);
+                    case "syncId":
+                        reader.Skip();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
         }
 
         private static int GetSyncId(ReadOnlySequence<byte> sequence)

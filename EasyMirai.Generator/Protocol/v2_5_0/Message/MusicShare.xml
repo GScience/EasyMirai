@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message 
+	xmlns="http://tempuri.org/Mirai.xsd" 
+	name="MusicShare"
+	desc="分享音乐消息">
+	<val name="kind" type="String" desc="类型"/>
+	<val name="title" type="String" desc="标题"/>
+	<val name="summary" type="String" desc="概括"/>
+	<val name="jumpUrl" type="String" desc="跳转路径"/>
+	<val name="pictureUrl" type="String" desc="封面路径"/>
+	<val name="musicUrl" type="String" desc="音源路径"/>
+	<val name="brief" type="String" desc="简介"/>
+</message>

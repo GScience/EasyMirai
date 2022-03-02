@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <message 
 	xmlns="http://tempuri.org/Mirai.xsd" 
-	name="Plain"
-	desc="文本消息">
-	<val name="text" type="String" desc="消息"/>
+	name="Json"
+	desc="Json消息">
+	<val name="json" type="String" desc="Json文本"/>
 </message>

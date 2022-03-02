@@ -143,6 +143,7 @@ namespace EasyMirai.Generator
         private ClassDef FromMessageDef(MessageDef msg)
         {
             var classDef = FromObjectDef(msg, _messageBaseDef, CategoryMessage);
+            classDef.Name = classDef.Name + "Message";
             classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "消息类型");
             return classDef;
         }

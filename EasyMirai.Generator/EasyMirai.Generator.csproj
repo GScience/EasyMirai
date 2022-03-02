@@ -21,10 +21,25 @@
     <None Remove="Protocol\v2_5_0\Event\OtherClientMessage.xml" />
     <None Remove="Protocol\v2_5_0\Event\StrangerMessage.xml" />
     <None Remove="Protocol\v2_5_0\Event\TempMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Message\App.xml" />
+    <None Remove="Protocol\v2_5_0\Message\At.xml" />
+    <None Remove="Protocol\v2_5_0\Message\AtAll.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Dice.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Face.xml" />
+    <None Remove="Protocol\v2_5_0\Message\File.xml" />
+    <None Remove="Protocol\v2_5_0\Message\FlashImage.xml" />
     <None Remove="Protocol\v2_5_0\Message\ForowardMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Image.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Json.xml" />
+    <None Remove="Protocol\v2_5_0\Message\MarketFace.xml" />
+    <None Remove="Protocol\v2_5_0\Message\MiraiCode.xml" />
+    <None Remove="Protocol\v2_5_0\Message\MusicShare.xml" />
     <None Remove="Protocol\v2_5_0\Message\Plain.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Poke.xml" />
     <None Remove="Protocol\v2_5_0\Message\Quote.xml" />
     <None Remove="Protocol\v2_5_0\Message\Source.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Voice.xml" />
+    <None Remove="Protocol\v2_5_0\Message\Xml.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +58,22 @@
     <EmbeddedResource Include="Protocol\v2_5_0\Event\TempMessage.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Event\GroupMessage.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Event\FriendMessage.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\MusicShare.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\MarketFace.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Dice.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Json.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\App.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Poke.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\File.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\MiraiCode.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Xml.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Voice.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\FlashImage.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Image.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\Face.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\AtAll.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Message\ForowardMessage.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Message\At.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Message\Quote.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Message\Source.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Message\Plain.xml" />

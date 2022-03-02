@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message 
+	xmlns="http://tempuri.org/Mirai.xsd" 
+	name="Face"
+	desc="表情消息">
+	<val name="faceId" type="Int" desc="QQ表情编号，可选，优先高于name"/>
+	<val name="name" type="String" desc="QQ表情拼音，可选"/>
+</message>

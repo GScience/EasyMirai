@@ -104,6 +104,8 @@ namespace {RootNamespace}
         {{
             string Type {{ get; }}
         }}
+        
+        {GenEventSerializeHookTableClassCode()}
 
         {GenMessageDeserializerCode()}
 
@@ -130,12 +132,27 @@ namespace {RootNamespace}
             }
             sources[MiraiSource.GetOutputFileName(SerializerClassName, "Util")] = source;
         }
+        private string GenEventSerializeHookTableClassCode()
+        {
+            var eventTable = _eventGenerator.EventTable;
+
+            var classBodyCode = string.Join(Environment.NewLine, eventTable.Select(pair => $@"
+            public Action<{pair.Key.FullName}> {pair.Key.Name.ToUpperCamel()};"));
+
+            var source = $@"
+        public class EventSerializeHookTable
+        {{
+            {classBodyCode}
+        }}";
+            return source;
+        }
+
         private string GenMessageSerializerCode()
         {
             var messageTable = _messageGenerator.MessageTable;
 
             var switchBodyCode = string.Join(Environment.NewLine, messageTable.Select(pair => $@"
-                case ""{pair.Key.Name.ToUpperCamel()}"":
+                case ""{pair.Value}"":
                     {GetClassConverterName(pair.Key)}.Write(writer, ({pair.Key.FullName})message);
                     break;"));
 
@@ -182,7 +199,7 @@ namespace {RootNamespace}
             var eventTable = _eventGenerator.EventTable;
 
             var switchBodyCode = string.Join(Environment.NewLine, eventTable.Select(pair => $@"
-                case ""{pair.Key.Name.ToUpperCamel()}"":
+                case ""{pair.Value}"":
                     {GetClassConverterName(pair.Key)}.Write(writer, ({pair.Key.FullName})e);
                     break;"));
 
@@ -208,10 +225,13 @@ namespace {RootNamespace}
                 case ""{pair.Value}"":
                     var obj{pair.Value} = new {pair.Key.FullName}();
                     {GetClassConverterName(pair.Key)}.Read(ref reader, obj{pair.Value});
+                    var hook{pair.Key.Name.ToUpperCamel()} = hookTable?.{pair.Key.Name.ToUpperCamel()};
+                    if (hook{pair.Key.Name.ToUpperCamel()} != null)
+                        Task.Factory.StartNew(() => hook{pair.Key.Name.ToUpperCamel()}(obj{pair.Value}));
                     return (ISerializableEvent)obj{pair.Value};"));
 
             var source = $@"
-        internal static ISerializableEvent ReadISerializableEvent(ref Utf8JsonReader reader)
+        internal static ISerializableEvent ReadISerializableEvent(ref Utf8JsonReader reader, EventSerializeHookTable hookTable = null)
         {{
             var type = GetJsonObjectType(reader);
             switch (type)

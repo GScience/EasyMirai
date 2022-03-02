@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<message 
+	xmlns="http://tempuri.org/Mirai.xsd" 
+	name="FlashImage"
+	desc="闪照消息">
+	<val name="imageId" type="String" desc="图片的imageId，群图片与好友图片格式不同。不为空时将忽略url属性"/>
+	<val name="url" type="String" desc="图片的URL，发送时可作网络图片的链接；接收时为腾讯图片服务器的链接，可用于图片下载"/>
+	<val name="path" type="String" desc="图片的路径，发送本地图片，路径相对于 JVM 工作路径（默认是当前路径，可通过 -Duser.dir=...指定），也可传入绝对路径。"/>
+	<val name="base64" type="String" desc="图片的 Base64 编码"/>
+</message>
