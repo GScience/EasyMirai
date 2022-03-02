@@ -12,6 +12,7 @@
     <None Remove="Protocol\Common\Object\Member.xml" />
     <None Remove="Protocol\v2_5_0\Api\About.xml" />
     <None Remove="Protocol\v2_5_0\Api\Bind.xml" />
+    <None Remove="Protocol\v2_5_0\Api\GroupList.xml" />
     <None Remove="Protocol\v2_5_0\Api\Release.xml" />
     <None Remove="Protocol\v2_5_0\Api\SendFriendMessage.xml" />
     <None Remove="Protocol\v2_5_0\Api\Verify.xml" />
@@ -34,6 +35,7 @@
     <EmbeddedResource Include="Protocol\v2_5_0\Api\About.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\Bind.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\Release.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\GroupList.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\SendFriendMessage.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\Verify.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Event\OtherClientMessage.xml" />

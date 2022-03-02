@@ -13,7 +13,6 @@ var config = MiraiConfig.FromFile("config.json");
 var session = await Session.CreateSessionAsync(config);
 session.Start();
 
-
 var startTime = DateTime.Now;
 
 for (var i = 0; i < 10; ++i)
@@ -25,6 +24,18 @@ var endTime = DateTime.Now;
 var deltaTime = endTime - startTime;
 
 Console.WriteLine($"Do About Command 10 times in {deltaTime.TotalMilliseconds}ms");
+
+startTime = DateTime.Now;
+
+for (var i = 0; i < 10; ++i)
+{
+    var groupList = await session.WsAdapter.GroupListAsync();
+}
+
+endTime = DateTime.Now;
+deltaTime = endTime - startTime;
+
+Console.WriteLine($"Do GroupList Command 10 times in {deltaTime.TotalMilliseconds}ms");
 
 while (true) ;
 

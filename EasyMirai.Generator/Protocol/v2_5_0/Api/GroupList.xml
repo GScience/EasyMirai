@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="GroupList"
+	 desc="获取群列表" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<objList name="data" desc="数据">
+			<val name="id" type="Long" desc="群号"/>
+			<val name="name" type="String" desc="群名称"/>
+			<val name="permission" type="String" desc="bot 在群中的权限"/>
+		</objList>
+	</response>
+
+	<adapter>
+		<http cmd="/groupList" method="Post" desc="使用此方法获取bot的群列表"/>
+		<ws cmd="groupList" desc="使用此方法获取bot的群列表"/>
+	</adapter>
+</api>
