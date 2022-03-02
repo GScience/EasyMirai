@@ -13,6 +13,9 @@ var config = MiraiConfig.FromFile("config.json");
 var session = await Session.CreateSessionAsync(config);
 session.Start();
 
+
+var about = await session.WsAdapter.AboutAsync();
+
 while (true) ;
 
 return;

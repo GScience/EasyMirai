@@ -9,6 +9,7 @@ using EasyMirai.CSharp.Api;
 using EasyMirai.CSharp.Util;
 using System.Net.WebSockets;
 using System.Buffers;
+using System.Collections.Concurrent;
 
 namespace EasyMirai.CSharp.Adapter
 {
@@ -18,19 +19,40 @@ namespace EasyMirai.CSharp.Adapter
     public partial class WsAdapter : IDisposable
     {
         /// <summary>
-        /// Ws 数据包
+        /// Ws 响应包
         /// </summary>
-        internal class NetPackage<T>
+        internal struct ResponsePackage<T>
+            where T : MiraiJsonSerializers.ISerializable<T>, new()
         {
             public int SyncId { get; }
             public T Data { get; }
 
-            public NetPackage(int syncId, T data)
+            public ResponsePackage(int syncId, T data)
             {
                 SyncId = syncId;
                 Data = data;
             }
 
+        }
+
+        /// <summary>
+        /// Ws 请求包
+        /// </summary>
+        internal struct RequestPackage<T>
+            where T : MiraiJsonSerializers.ISerializable<T>, new()
+        {
+            public int SyncId { get; }
+            public string Command { get; }
+            public string? SubCommand { get; }
+            public T Content { get; }
+
+            public RequestPackage(int syncId, string command, string? subCommand, T content)
+            {
+                SyncId = syncId;
+                Command = command;
+                SubCommand = subCommand;
+                Content = content;
+            }
         }
 
         /// <summary>
@@ -91,6 +113,17 @@ namespace EasyMirai.CSharp.Adapter
             }
         }
         private ClientWebSocket _wsClient = new();
+        private object _wsSendLock = new();
+
+        /// <summary>
+        /// 负责记录syncId对应的响应
+        /// </summary>
+        private ConcurrentDictionary<ushort, Action<WsBufferSequence<byte>>> _syncResponseTable = new();
+
+        /// <summary>
+        /// 当前Sync Id
+        /// </summary>
+        private ushort _currentSyncId = 1;
 
         internal WsAdapter() { }
 
@@ -135,6 +168,16 @@ namespace EasyMirai.CSharp.Adapter
             {
                 using var response = await PollFromWebSocketAsync(cancellation);
                 var syncId = GetSyncId(response.Sequence);
+                if (syncId == -1)
+                {
+
+                }
+                else
+                {
+                    var ushortSyncId = (ushort)syncId;
+                    if (_syncResponseTable.TryGetValue(ushortSyncId, out var result))
+                        result(response);
+                }
             }
         }
 
@@ -148,18 +191,45 @@ namespace EasyMirai.CSharp.Adapter
             where TRequest : MiraiJsonSerializers.ISerializable<TRequest>, new()
             where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
-            /*request.DefaultConverter.Write(writer, request);
-            writer.Flush();
-            var requestJson = Encoding.UTF8.GetString(testStream.ToArray());
+            var arrayBuffer = new ArrayBufferWriter<byte>();
+            var syncId = _currentSyncId++;
+            var package = new RequestPackage<TRequest>(syncId, cmd, null, request);
 
-            using var ms = new MemoryStream(Encoding.UTF8.GetBytes("{\"a\":1}"));
+            // Send request first
+            WriteWsRequestPackage(arrayBuffer, package);
+            bool lockWasTaken = false;
+            try
+            {
+                Monitor.Enter(_wsSendLock, ref lockWasTaken);
+                await _wsClient.SendAsync(arrayBuffer.WrittenMemory, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+            finally
+            {
+                if (lockWasTaken) 
+                    Monitor.Exit(_wsSendLock);
+            }
 
-            var response = new TResponse();
-            response.DefaultConverter.Read("{}", response);
+            // On response
+            using Semaphore sema = new Semaphore(0, 1);
+            ResponsePackage<TResponse>? response = default;
+            var onResponse = (WsBufferSequence<byte> buffer) =>
+            {
+                response = ReadWsResponcePackage<TResponse>(buffer.Sequence);
+                sema.Release();
+            };
+
+            _syncResponseTable.TryAdd(syncId, onResponse);
+
+            // Wait response
+            if (!sema.WaitOne(TimeSpan.FromSeconds(5)))
+                throw new TimeoutException();
+
+            _syncResponseTable.TryRemove(syncId, out _);
+
             if (response == null)
-                throw new Exception("Failed to deserialize object");
-            return response;*/
-            return default(TResponse);
+                throw new Exception();
+
+            return response.Value.Data;
         }
 
         /// <summary>
@@ -189,16 +259,37 @@ namespace EasyMirai.CSharp.Adapter
             await wsAdapter._wsClient.ConnectAsync(new Uri($"ws://{config.Host}:{config.Port}/all"), cancellation);
             using var response = await wsAdapter.PollFromWebSocketAsync(cancellation);
 
-            var responseObj = ReadWsPackage<Verify.Response>(response.Sequence);
+            var responseObj = ReadWsResponcePackage<Verify.Response>(response.Sequence);
             sessionKey = responseObj.Data.Session;
             return wsAdapter;
+        }
+
+        /// <summary>
+        /// 写入包
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sequence"></param>
+        /// <returns></returns>
+        private static void WriteWsRequestPackage<T>(ArrayBufferWriter<byte> arrayBuffer, RequestPackage<T> requestPackage)
+            where T : MiraiJsonSerializers.ISerializable<T>, new()
+        {
+            var writer = new Utf8JsonWriter(arrayBuffer);
+            writer.WriteStartObject();
+            writer.WriteNumber("syncId", requestPackage.SyncId);
+            writer.WriteString("command", requestPackage.Command);
+            writer.WriteString("subCommand", requestPackage.SubCommand);
+            writer.WritePropertyName("content");
+            requestPackage.Content.DefaultConverter.Write(writer, requestPackage.Content);
+            writer.WriteEndObject();
+            writer.Flush();
         }
 
         /// <summary>
         /// 读取 Websock 数据包
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private static NetPackage<T> ReadWsPackage<T>(ReadOnlySequence<byte> sequence) where T : MiraiJsonSerializers.ISerializable<T>, new()
+        private static ResponsePackage<T> ReadWsResponcePackage<T>(ReadOnlySequence<byte> sequence) 
+            where T : MiraiJsonSerializers.ISerializable<T>, new()
         {
             var reader = new Utf8JsonReader(sequence);
             var syncId = -1;
@@ -231,7 +322,7 @@ namespace EasyMirai.CSharp.Adapter
                         throw new NotImplementedException();
                 }
             }
-            return new NetPackage<T>(syncId, obj);
+            return new ResponsePackage<T>(syncId, obj);
         }
 
         private static int GetSyncId(ReadOnlySequence<byte> sequence)
