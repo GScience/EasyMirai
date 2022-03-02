@@ -46,6 +46,11 @@ namespace EasyMirai.CSharp
             return session;
         }
 
+        public void Start()
+        {
+            WsAdapter?.Start(CancellationToken.None);
+        }
+
         public void Dispose()
         {
             WsAdapter?.Dispose();

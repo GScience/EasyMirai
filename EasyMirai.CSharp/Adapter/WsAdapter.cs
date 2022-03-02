@@ -126,6 +126,19 @@ namespace EasyMirai.CSharp.Adapter
         }
 
         /// <summary>
+        /// 启动WsAdapter
+        /// </summary>
+        /// <returns></returns>
+        public async Task Start(CancellationToken cancellation)
+        {
+            while (!cancellation.IsCancellationRequested)
+            {
+                using var response = await PollFromWebSocketAsync(cancellation);
+                var syncId = GetSyncId(response.Sequence);
+            }
+        }
+
+        /// <summary>
         /// 发送请求
         /// </summary>
         /// <typeparam name="TRequest"></typeparam>
@@ -175,9 +188,9 @@ namespace EasyMirai.CSharp.Adapter
                 wsAdapter._wsClient.Options.SetRequestHeader("sessionKey", sessionKey);
             await wsAdapter._wsClient.ConnectAsync(new Uri($"ws://{config.Host}:{config.Port}/all"), cancellation);
             using var response = await wsAdapter.PollFromWebSocketAsync(cancellation);
-            
+
             var responseObj = ReadWsPackage<Verify.Response>(response.Sequence);
-            
+            sessionKey = responseObj.Data.Session;
             return wsAdapter;
         }
 
@@ -187,8 +200,6 @@ namespace EasyMirai.CSharp.Adapter
         /// <typeparam name="T"></typeparam>
         private static NetPackage<T> ReadWsPackage<T>(ReadOnlySequence<byte> sequence) where T : MiraiJsonSerializers.ISerializable<T>, new()
         {
-            //var str = Encoding.UTF8.GetString(sequence);
-            //var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(str));
             var reader = new Utf8JsonReader(sequence);
             var syncId = -1;
             var obj = new T();
@@ -213,6 +224,8 @@ namespace EasyMirai.CSharp.Adapter
                     case "syncId":
                         if (reader.TokenType == JsonTokenType.Number)
                             syncId = reader.GetInt32();
+                        else
+                            int.TryParse(reader.GetString(), out syncId);
                         break;
                     default:
                         throw new NotImplementedException();
@@ -221,6 +234,43 @@ namespace EasyMirai.CSharp.Adapter
             return new NetPackage<T>(syncId, obj);
         }
 
+        private static int GetSyncId(ReadOnlySequence<byte> sequence)
+        {
+            var reader = new Utf8JsonReader(sequence);
+
+            int depth = 0;
+            reader.Read();
+
+            while (true)
+            {
+                reader.Read();
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.PropertyName:
+                        if (depth != 0)
+                            break;
+                        var name = reader.GetString();
+                        if (name != "syncId")
+                            break;
+                        reader.Read();
+                        if (reader.TokenType == JsonTokenType.Number)
+                            return reader.GetInt32();
+                        else
+                        {
+                            if (int.TryParse(reader.GetString(), out var syncId))
+                                return syncId;
+                            return -1;
+                        }
+                        return -1;
+                    case JsonTokenType.StartObject:
+                        ++depth;
+                        break;
+                    case JsonTokenType.EndObject:
+                        --depth;
+                        break;
+                }
+            }
+        }
         public void Dispose()
         {
             GC.SuppressFinalize(this);

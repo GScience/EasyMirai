@@ -34,9 +34,30 @@ namespace EasyMirai.CSharp.Util
         /// <returns></returns>
         internal static string GetJsonObjectType(Utf8JsonReader reader)
         {
-            var jsonDocument = JsonDocument.ParseValue(ref reader);
-            var type = jsonDocument.RootElement.GetProperty("type").GetString();
-            return type!;
+            int depth = 0;
+            reader.Read();
+
+            while (true)
+            {
+                reader.Read();
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.PropertyName:
+                        if (depth != 0)
+                            break;
+                        var name = reader.GetString();
+                        if (name != "type")
+                            break;
+                        reader.Read();
+                        return reader.GetString() ?? "";
+                    case JsonTokenType.StartObject:
+                        ++depth;
+                        break;
+                    case JsonTokenType.EndObject:
+                        --depth;
+                        break;
+                }
+            }
         }
 
         public partial class ConverterWrapper<T> where T : ISerializable<T>, new()

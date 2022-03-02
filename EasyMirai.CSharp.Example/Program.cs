@@ -11,7 +11,7 @@ using EasyMirai.CSharp;
 
 var config = MiraiConfig.FromFile("config.json");
 var session = await Session.CreateSessionAsync(config);
-
+session.Start();
 
 while (true) ;
 
