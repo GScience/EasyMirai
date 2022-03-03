@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotGroupPermissionChangeEvent"
+	desc="Bot在群里的权限被改变. 操作人一定是群主">
+	<val name="origin" type="String" desc="Bot的原权限，OWNER、ADMINISTRATOR或MEMBER"/>
+	<val name="current" type="String" desc="Bot的新权限，OWNER、ADMINISTRATOR或MEMBER"/>
+	<ref name="group" ref="Group" desc="权限改变所在的群信息"/>
+</event>

@@ -29,6 +29,7 @@ namespace EasyMirai.Generator
         public const string CategoryApiResponse = "Api.Response";
         public const string CategoryObject = "Object";
         public const string CategoryEvent = "Event";
+        public const string CategoryIEvent = "Interface.Event";
         public const string CategorySerializer = "Serializer";
 
         /// <summary>
@@ -42,6 +43,7 @@ namespace EasyMirai.Generator
         private ClassDef _httpAdapter { get; set; }
 
         private ClassDef _messageBaseDef;
+        private ClassDef _eventBaseDef;
         private ClassDef _functionDef;
 
         public MiraiModule(MiraiProtocol protocol)
@@ -52,10 +54,13 @@ namespace EasyMirai.Generator
             _httpAdapter.Category = CategoryAdapterHttp;
 
             _messageBaseDef = AddInternalClass(protocol, "Message", "通用消息接口");
+            _eventBaseDef = AddInternalClass(protocol, "Event", "通用事件接口");
             _functionDef = AddInternalClass(protocol, "Function", "函数");
 
             _messageBaseDef.Name = "IMessage";
             _messageBaseDef.Category = CategoryIMessage;
+            _eventBaseDef.Name = "IEvent";
+            _eventBaseDef.Category = CategoryIEvent;
             _functionDef.Name = "IFunction";
             _functionDef.Category = CategoryIFunctione;
 
@@ -154,7 +159,7 @@ namespace EasyMirai.Generator
         /// <returns></returns>
         private ClassDef FromEventDef(EventDef msg)
         {
-            var classDef = FromObjectDef(msg, null, CategoryEvent);
+            var classDef = FromObjectDef(msg, _eventBaseDef, CategoryEvent);
             classDef.ConstString["Type"] = (msg.Name, TagOnlyForGenerate + "事件类型");
             return classDef;
         }

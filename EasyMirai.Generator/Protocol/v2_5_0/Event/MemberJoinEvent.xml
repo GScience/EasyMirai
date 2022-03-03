@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="MemberJoinEvent"
+	desc="新人入群的事件">
+	<ref name="member" ref="Member" desc="新人信息"/>
+	<ref name="invitor" ref="Member" desc="如果被要求入群的话，则为邀请人的 Member 对象"/>
+</event>

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="GroupEntranceAnnouncementChangeEvent"
+	desc="某个群名改变">
+	<val name="origin" type="String" desc="原公告"/>
+	<val name="current" type="String" desc="新公告"/>
+	<ref name="group" ref="Group" desc="公告改变的群信息"/>
+	<ref name="operator" ref="Member" desc="操作的管理员或群主信息，当null时为Bot操作"/>
+</event>

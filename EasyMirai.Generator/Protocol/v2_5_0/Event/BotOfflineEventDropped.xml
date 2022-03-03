@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotOfflineEventDropped"
+	desc="Bot被服务器断开或因网络问题而掉线">
+	<val name="qq" type="Long" desc="被服务器断开或因网络问题而掉线的Bot的QQ号"/>
+</event>

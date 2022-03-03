@@ -72,6 +72,7 @@ namespace EasyMirai.CSharp.Adapter
 
         public void Dispose()
         {
+            ReleaseAsync(_config.Id).Wait();
             GC.SuppressFinalize(this);
         }
     }

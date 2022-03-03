@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="GroupAllowConfessTalkEvent"
+	desc="坦白说">
+	<val name="origin" type="Boolean" desc="原本坦白说是否开启"/>
+	<val name="current" type="Boolean" desc="现在坦白说是否开启"/>
+	<val name="isByBot" type="Boolean" desc="是否Bot进行该操作"/>
+	<ref name="group" ref="Group" desc="坦白说状态改变的群信息"/>
+</event>

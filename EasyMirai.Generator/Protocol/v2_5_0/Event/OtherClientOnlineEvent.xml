@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="OtherClientOnlineEvent"
+	desc="其他客户端上线">
+	<val name="kind" type="Long" desc="详细设备类型"/>
+	<ref name="client" ref="Client" desc="其他客户端"/>
+</event>

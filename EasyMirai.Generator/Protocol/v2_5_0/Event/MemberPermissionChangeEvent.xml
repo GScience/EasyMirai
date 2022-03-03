@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="MemberPermissionChangeEvent"
+	desc="成员权限改变的事件（该成员不是Bot）">
+	<val name="origin" type="String" desc="原权限"/>
+	<val name="current" type="String" desc="现权限"/>
+	<ref name="member" ref="Member" desc="权限改动的群员的信息"/>
+</event>

@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="MemberSpecialTitleChangeEvent"
+	desc="群头衔改动（只有群主有操作限权）">
+	<val name="origin" type="String" desc="原头衔"/>
+	<val name="current" type="String" desc="现头衔"/>
+	<ref name="member" ref="Member" desc="头衔改动的群员的信息"/>
+</event>

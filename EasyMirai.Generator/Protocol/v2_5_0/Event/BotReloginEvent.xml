@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotReloginEvent"
+	desc="Bot主动重新登录">
+	<val name="qq" type="Long" desc="主动重新登录的Bot的QQ号"/>
+</event>

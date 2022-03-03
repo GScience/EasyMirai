@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotLeaveEventActive"
+	desc="Bot主动退出一个群">
+	<ref name="group" ref="Group" desc="Bot退出的群的信息"/>
+</event>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="MemberLeaveEventKick"
+	desc="成员被踢出群（该成员不是Bot）">
+	<ref name="member" ref="Member" desc="新人信息"/>
+	<ref name="operator" ref="Member" desc="如果被要求入群的话，则为邀请人的 Member 对象"/>
+</event>

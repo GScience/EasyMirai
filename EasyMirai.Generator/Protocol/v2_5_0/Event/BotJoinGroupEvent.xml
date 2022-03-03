@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotJoinGroupEvent"
+	desc="Bot加入了一个新群">
+	<ref name="group" ref="Group" desc="Bot新加入群的信息"/>
+	<ref name="invitor" ref="Member" desc="如果被要求入群的话，则为邀请人的 Member 对象"/>
+</event>

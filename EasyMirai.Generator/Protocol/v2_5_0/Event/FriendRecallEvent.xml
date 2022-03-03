@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="FriendRecallEvent"
+	desc="好友消息撤回">
+	<val name="authorId" type="Long" desc="原消息发送者的QQ号"/>
+	<val name="messageId" type="Int" desc="原消息messageId"/>
+	<val name="time" type="Int" desc="原消息发送时间"/>
+	<val name="operator" type="Long" desc="好友QQ号或BotQQ号"/>
+</event>

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="FriendInputStatusChangedEvent"
+	desc="好友输入状态改变">
+	<val name="inputting" type="Boolean" desc="当前输出状态是否正在输入"/>
+	<ref name="friend" ref="Friend" desc="好友信息"/>
+</event>

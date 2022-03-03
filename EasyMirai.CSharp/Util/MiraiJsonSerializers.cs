@@ -7,11 +7,27 @@ using System.Text.Json;
 using System.Buffers;
 using System.Threading.Tasks;
 using EasyMirai.CSharp.Message;
+using EasyMirai.CSharp.Event;
 
 namespace EasyMirai.CSharp.Util
 {
     public static partial class MiraiJsonSerializers
     {
+        internal static class IEventConverter
+        {
+            public static void Write(Utf8JsonWriter writer, IEvent value)
+            {
+                WriteISerializableEvent(writer, (ISerializableEvent)value);
+            }
+
+            public static IEvent Read(ref Utf8JsonReader reader)
+            {
+                var reader2 = reader;
+                reader2.Read();
+                return (IEvent)ReadISerializableEvent(ref reader);
+            }
+        }
+
         internal static class IMessageConverter
         {
             public static void Write(Utf8JsonWriter writer, IMessage value)

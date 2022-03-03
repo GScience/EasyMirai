@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotMuteEvent"
+	desc="Bot被禁言">
+	<val name="durationSeconds" type="Int" desc="禁言时长，单位为秒"/>
+	<ref name="operator" ref="Member" desc="操作的管理员或群主信息"/>
+</event>

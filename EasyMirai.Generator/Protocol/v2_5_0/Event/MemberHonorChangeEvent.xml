@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="MemberHonorChangeEvent"
+	desc="群员称号改变">
+	<val name="action" type="String" desc="称号变化行为：achieve获得称号，lose失去称号"/>
+	<val name="honor" type="String" desc="称号名称"/>
+	<ref name="member" ref="Member" desc="被取消禁言的群员的信息"/>
+</event>

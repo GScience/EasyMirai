@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="CommandExecutedEvent"
+	desc="命令被执行">
+	<val name="eventId" type="Long" desc="事件标识，响应该事件时的标识"/>
+	<val name="name" type="String" desc="命令名称"/>
+	<ref name="friend" ref="Friend" desc="发送命令的好友, 从控制台发送为 null"/>
+	<ref name="member" ref="Member" desc="发送命令的群成员, 从控制台发送为 null"/>
+	<refList name="args" ref="Message" desc="指令的参数, 以消息类型传递"/>
+</event>

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="GroupMuteAllEvent"
+	desc="全员禁言">
+	<val name="origin" type="Boolean" desc="原本是否处于全员禁言"/>
+	<val name="current" type="Boolean" desc="现在是否处于全员禁言"/>
+	<ref name="group" ref="Group" desc="全员禁言的群信息"/>
+	<ref name="operator" ref="Member" desc="操作的管理员或群主信息，当null时为Bot操作"/>
+</event>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="PeekMessage"
+	 desc="查看队列头部" >
+	<request>
+		<val name="sessionKey" type="String" desc="已经激活的Session"/>
+		<val name="count" type="Long" desc="消息数量"/>
+	</request>
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<refList name="data" ref="Event" desc="消息、事件列表"/>
+	</response>
+	<adapter>
+		<http cmd="/peekMessage" method="Get" desc="即按时间顺序查看消息，查看消息后不从队列中移除"/>
+	</adapter>
+</api>

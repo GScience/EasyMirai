@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotOfflineEventForce"
+	desc="Bot被挤下线">
+	<val name="qq" type="Long" desc="被挤下线的Bot的QQ号"/>
+</event>

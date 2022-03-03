@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="FriendNickChangedEvent"
+	desc="好友昵称改变">
+	<val name="from" type="String" desc="原昵称"/>
+	<val name="to" type="String" desc="新昵称"/>
+	<ref name="friend" ref="Friend" desc="好友信息"/>
+</event>

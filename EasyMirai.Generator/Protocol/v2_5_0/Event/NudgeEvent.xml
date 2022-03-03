@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="NudgeEvent"
+	desc="戳一戳事件">
+	<val name="fromId" type="Long" desc="动作发出者的QQ号"/>
+	<val name="action" type="String" desc="动作类型"/>
+	<val name="suffix" type="String" desc="自定义动作内容"/>
+	<val name="target" type="Long" desc="动作目标的QQ号"/>
+	<obj name="subject" desc="来源">
+		<val name="id" type="Long" desc="来源的QQ号（好友）或群号"/>
+		<val name="kind" type="String" desc="来源的类型，Friend 或 Group"/>
+	</obj>
+</event>

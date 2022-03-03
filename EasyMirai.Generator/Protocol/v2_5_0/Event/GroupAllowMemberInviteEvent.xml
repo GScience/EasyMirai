@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="GroupAllowMemberInviteEvent"
+	desc="允许群员邀请好友加群">
+	<val name="origin" type="Boolean" desc="原本是否允许群员邀请好友加群"/>
+	<val name="current" type="Boolean" desc="现在是否允许群员邀请好友加群"/>
+	<ref name="group" ref="Group" desc="允许群员邀请好友加群状态改变的群信息"/>
+	<ref name="operator" ref="Member" desc="操作的管理员或群主信息，当null时为Bot操作"/>
+</event>

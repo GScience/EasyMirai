@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="MemberUnmuteEvent"
+	desc="群成员被取消禁言事件（该成员不是Bot）">
+	<ref name="member" ref="Member" desc="被取消禁言的群员的信息"/>
+	<ref name="operator" ref="Member" desc="操作者的信息，当null时为Bot操作"/>
+</event>

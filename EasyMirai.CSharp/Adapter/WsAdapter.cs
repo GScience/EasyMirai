@@ -194,10 +194,20 @@ namespace EasyMirai.CSharp.Adapter
                 try
                 {
                     using var loopResponse = await PollFromWebSocketAsync(cancellation);
-                    var testStr = Encoding.UTF8.GetString(loopResponse.Sequence);
                     var syncId = GetSyncId(loopResponse.Sequence);
                     if (syncId == -1)
-                        ReadWsEvent(loopResponse.Sequence, EventHookTable);
+                    {
+                        try
+                        {
+                            ReadWsEvent(loopResponse.Sequence, EventHookTable);
+                        }
+                        catch (Exception ex)
+                        {
+                            var payLoad = Encoding.UTF8.GetString(loopResponse.Sequence);
+                            Console.WriteLine($"Fail to deserialize json because: {ex}\nPayload: {payLoad}");
+                            continue;
+                        }
+                    }
                     else
                     {
                         var ushortSyncId = (ushort)syncId;
@@ -205,10 +215,10 @@ namespace EasyMirai.CSharp.Adapter
                             result(loopResponse);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     IsConnected = false;
-                    throw;
+                    throw new AdapterException(ex, "WsAdapter error: ");
                 }
             }
         }

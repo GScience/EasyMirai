@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="BotLeaveEventKick"
+	desc="Bot被踢出一个群">
+	<ref name="group" ref="Group" desc="Bot被踢出的群的信息"/>
+	<ref name="operator" ref="Member" desc="Bot被踢后获取操作人的 Member 对象"/>
+</event>

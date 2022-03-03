@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<event
+	xmlns="http://tempuri.org/Mirai.xsd"
+	name="OtherClientOfflineEvent"
+	desc="其他客户端下线">
+	<ref name="client" ref="Client" desc="其他客户端"/>
+</event>

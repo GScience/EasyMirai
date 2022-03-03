@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="CountMessage"
+	 desc="查看队列大小" >
+	<request>
+		<val name="sessionKey" type="String" desc="已经激活的Session"/>
+	</request>
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<val name="data" type="Long" desc="队列大小"/>
+	</response>
+	<adapter>
+		<http cmd="/countMessage" method="Get" desc="使用此方法获取 session 未读缓存消息的数量"/>
+	</adapter>
+</api>

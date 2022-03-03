@@ -13,10 +13,19 @@ var config = MiraiConfig.FromFile("config.json");
 var session = Session.CreateSession(config);
 await session.Start();
 
+var startTime = DateTime.Now;
+
+
 var aboutWs = await session.WsAdapter!.AboutAsync();
 var aboutHttp = await session.HttpAdapter!.AboutAsync();
 var groupListWs = await session.WsAdapter!.GroupListAsync();
 var groupListHttp = await session.HttpAdapter!.GroupListAsync();
+
+session.WsAdapter.EventHookTable.NudgeEvent = async (nudgeEvent) =>
+{
+    if (nudgeEvent.Subject!.Id != config.Id && nudgeEvent.Subject!.Kind == "Group")
+        await session.WsAdapter.SendGroupMessageAsync(group: nudgeEvent.Subject!.Id, messageChain: new[] { new PlainMessage { Text = "戳尼玛" } });
+};
 
 session.WsAdapter.EventHookTable.GroupMessage = async (groupMessage) =>
 {

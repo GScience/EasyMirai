@@ -21,6 +21,7 @@ namespace EasyMirai.Generator.CSharp
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryMessage] = new MessageGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryApi] = new ApiGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryIMessage] = new IMessageGenerator();
+            GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryIEvent] = new IEventGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryAdapterWs] = new WsAdapterGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryAdapterHttp] = new HttpAdapterGenerator();
             GeneratorBase.SourceGeneratorTable[MiraiModule.CategoryEvent] = new EventGenerator();
