@@ -20,7 +20,7 @@ namespace EasyMirai.Generator.CSharp.Generator
                 source += $"#error class Request and class Response is required but not found in {classDef.Name}";
 
             source += $@"
-
+#nullable enable
 using System;
 using System.Text.Json.Serialization;
 using {EventGenerator.RootNamespace};
@@ -36,11 +36,11 @@ namespace {RootNamespace}
     /// Version: {classDef.Version}
     /// </remarks>
     public class {classDef.Name}
-    {{{ObjectGenerator.GenClassSource(classDef.Classes[0], 2)}
-{ObjectGenerator.GenClassSource(classDef.Classes[1], 2)}
+    {{{ObjectGenerator.GenClassSource(classDef.Classes[0], 2, allowNull:true)}
+{ObjectGenerator.GenClassSource(classDef.Classes[1], 2, allowNull: true)}
     }}
 }}
-";
+#nullable restore";
             return source;
         }
 

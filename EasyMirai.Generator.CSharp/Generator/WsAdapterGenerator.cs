@@ -65,7 +65,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// 自动处理 SessionKey<br/>
         /// Version: {api.apiDef.Version}
         /// </remarks>
-        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async({requestClassDef.ExpandArgs(new[]{ "sessionKey" })})
+        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async({requestClassDef.ExpandArgs(new[]{ "sessionKey" }, true)})
         {{
             Api.{api.apiDef.Name}.Request request = new()
             {{
@@ -77,7 +77,7 @@ namespace EasyMirai.Generator.CSharp.Generator
             });
 
             string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Adapter")}
-
+#nullable enable
 using System;
 using System.Text.Json.Serialization;
 using {EventGenerator.RootNamespace};
@@ -99,7 +99,7 @@ namespace {RootNamespace}
 {string.Join(Environment.NewLine, apiFuncDefs)}
     }}
 }}
-";
+#nullable restore";
             return source;
         }
 

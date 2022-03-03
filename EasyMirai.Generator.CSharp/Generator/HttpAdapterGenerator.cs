@@ -42,7 +42,13 @@ namespace EasyMirai.Generator.CSharp.Generator
             if (method == "Post")
                 return cmd;
 
-            var argsSource = string.Join("&", requestClassDef.Members.Values.Select(m => $"{m.Name.ToLowerCamel()}={{ request.{m.Name.ToUpperCamel()} }}"));
+            var argsSource = string.Join("&", requestClassDef.Members.Values.Select(m =>
+            {
+                if (m.Type == MemberType.Boolean || m.Type == MemberType.Int || m.Type == MemberType.Long)
+                    return $@"{{(request.{m.Name.ToUpperCamel()} != null ? $""{m.Name.ToLowerCamel()}={{request.{m.Name.ToUpperCamel()}.Value}}"" : """")}}";
+                return $@"{{(request.{m.Name.ToUpperCamel()} != null ? $""{m.Name.ToLowerCamel()}={{request.{m.Name.ToUpperCamel()}}}"" : """")}}";
+            }));
+
             if (string.IsNullOrEmpty(argsSource))
                 return cmd;
             return $"{cmd}?{argsSource}";
@@ -81,7 +87,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// 自动处理 SessionKey<br/>
         /// Version: {api.apiDef.Version}
         /// </remarks>
-        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async({requestClassDef.ExpandArgs(new[] { "sessionKey" })})
+        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async({requestClassDef.ExpandArgs(new[] { "sessionKey" }, true)})
         {{
             Api.{api.apiDef.Name}.Request request = new()
             {{
@@ -93,7 +99,7 @@ namespace EasyMirai.Generator.CSharp.Generator
             });
 
             string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Adapter")}
-
+#nullable enable
 using System;
 using System.Text.Json.Serialization;
 using {EventGenerator.RootNamespace};
@@ -115,7 +121,7 @@ namespace {RootNamespace}
 {string.Join(Environment.NewLine, apiFuncDefs)}
     }}
 }}
-";
+#nullable restore";
             return source;
         }
 

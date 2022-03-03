@@ -20,6 +20,11 @@ namespace EasyMirai.CSharp.Adapter
     {
         private MiraiConfig _config;
 
+        /// <summary>
+        /// 是否连接
+        /// </summary>
+        public bool IsConnected { get; set; }
+
         public MiraiJsonSerializers.EventSerializeHookTable EventHookTable = new();
 
         /// <summary>
@@ -177,7 +182,7 @@ namespace EasyMirai.CSharp.Adapter
             using var verifyResponse = await PollFromWebSocketAsync(cancellation);
 
             var verifyResponseObj = ReadWsResponcePackage<Verify.Response>(verifyResponse.Sequence);
-            sessionKey = verifyResponseObj.Data.Session;
+            sessionKey = verifyResponseObj.Data!.Session!;
 
             _ = Task.Factory.StartNew(() => EventLoop(cancellation), cancellation);
         }
@@ -200,10 +205,10 @@ namespace EasyMirai.CSharp.Adapter
                             result(loopResponse);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    // Log error
-                    Console.WriteLine(ex);
+                    IsConnected = false;
+                    throw;
                 }
             }
         }
@@ -224,7 +229,6 @@ namespace EasyMirai.CSharp.Adapter
 
             // Send request
             WriteWsRequestPackage(arrayBuffer, package);
-            var str = Encoding.UTF8.GetString(arrayBuffer.WrittenSpan);
             bool lockWasTaken = false;
             try
             {

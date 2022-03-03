@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <api xmlns="http://tempuri.org/Mirai.xsd"
-	 name="SendGroupMessage"
-	 desc="发送群消息" >
+	 name="SendTempMessage"
+	 desc="发送临时会话消息" >
 	<request>
 		<val name="sessionKey" type="String" desc="已经激活的Session"/>
-		<val name="target" type="Long" desc="可选，发送消息目标群的群号"/>
-		<val name="group" type="Long" desc="可选，target与group中需要有一个参数不为空，当target不为空时group将被忽略，同target"/>
+		<val name="qq" type="Long" desc="临时会话对象QQ号"/>
+		<val name="group" type="Long" desc="临时会话群号"/>
 		<val name="quote" type="Int" desc="可选，引用一条消息的messageId进行回复"/>
 		<refList name="messageChain" ref="Message" desc="消息链，是一个消息对象构成的数组"/>
 	</request>
@@ -17,7 +17,7 @@
 	</response>
 
 	<adapter>
-		<http cmd="/sendGroupMessage" method="Post" desc="使用此方法向指定群发送消息"/>
-		<ws cmd="sendGroupMessage" desc="使用此方法向指定群发送消息"/>
+		<http cmd="/sendTempMessage" method="Post" desc="使用此方法发送临时会话消息"/>
+		<ws cmd="sendTempMessage" desc="使用此方法发送临时会话消息"/>
 	</adapter>
 </api>

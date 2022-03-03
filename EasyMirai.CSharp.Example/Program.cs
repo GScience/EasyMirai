@@ -13,17 +13,17 @@ var config = MiraiConfig.FromFile("config.json");
 var session = Session.CreateSession(config);
 await session.Start();
 
-var aboutWs = await session.WsAdapter.AboutAsync();
-var aboutHttp = await session.HttpAdapter.AboutAsync();
-var groupListWs = await session.WsAdapter.GroupListAsync();
-var groupListHttp = await session.HttpAdapter.GroupListAsync();
+var aboutWs = await session.WsAdapter!.AboutAsync();
+var aboutHttp = await session.HttpAdapter!.AboutAsync();
+var groupListWs = await session.WsAdapter!.GroupListAsync();
+var groupListHttp = await session.HttpAdapter!.GroupListAsync();
 
 session.WsAdapter.EventHookTable.GroupMessage = async (groupMessage) =>
 {
-    foreach (var msg in groupMessage.MessageChain)
+    foreach (var msg in groupMessage!.MessageChain!)
         if (msg is PlainMessage plainMessage &&
             plainMessage.Text == "犊子测试机呢")
-            await session.WsAdapter.SendGroupMessageAsync(groupMessage.Sender.Group.Id, new List<IMessage>() { new PlainMessage { Text = "在这呢~" } });
+            await session.WsAdapter.SendGroupMessageAsync(group: groupMessage.Sender!.Group!.Id, messageChain: new[] { new PlainMessage { Text = "在这呢" } });
 };
 
 while (true)

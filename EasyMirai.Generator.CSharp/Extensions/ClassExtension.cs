@@ -14,7 +14,7 @@ namespace EasyMirai.Generator.CSharp.Extensions
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        public static string ExpandArgs(this ClassDef classDef, string[] ignoreArgs)
+        public static string ExpandArgs(this ClassDef classDef, string[] ignoreArgs, bool allowNull)
         {
             var members = classDef.Members.Values;
             return string.Join(", ", 
@@ -22,7 +22,7 @@ namespace EasyMirai.Generator.CSharp.Extensions
                     .OrderBy(m => m.Type)
                     .ThenBy(m => m.Name)
                     .Where(memberDef => !ignoreArgs.Contains(memberDef.Name.ToLowerCamel()))
-                    .Select(memberDef => memberDef.GetCSharpMemberDefine(true)));
+                    .Select(memberDef => memberDef.GetCSharpMemberDefine(true, allowNull) + (allowNull ? "=null" :"")));
         }
 
         /// <summary>

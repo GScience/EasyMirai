@@ -61,7 +61,7 @@ namespace EasyMirai.CSharp.Adapter
         public async Task StartAsync(CancellationToken token)
         {
             var verifyResponse = await VerifyAsync(_config.VerifyKey);
-            sessionKey = verifyResponse.Session;
+            sessionKey = verifyResponse.Session!;
             var bindResponse = await BindAsync(_config.Id);
         }
 

@@ -120,6 +120,7 @@ namespace {RootNamespace}
             else
             {
                 source += $@"
+#nullable enable
 using System.Text.Json;
 
 namespace {RootNamespace}
@@ -128,7 +129,8 @@ namespace {RootNamespace}
     {{
         
     }}
-}}";
+}}
+#nullable restore";
             }
             sources[MiraiSource.GetOutputFileName(SerializerClassName, "Util")] = source;
         }
@@ -250,7 +252,11 @@ namespace {RootNamespace}
             string source;
 
             var type = m.Type;
-            var name = $"value.{m.Name.ToUpperCamel()}";
+            bool isBoxing = 
+                type == MemberType.Boolean || 
+                type == MemberType.Int || 
+                type == MemberType.Long;
+            var name = $"value.{m.Name.ToUpperCamel()}{(isBoxing ? ".Value" : "")}";
             if (isListComponent)
             {
                 type = m.GetListComponentType();
@@ -282,13 +288,13 @@ namespace {RootNamespace}
                 case MemberType.BooleanList:
                 case MemberType.ObjectList:
                     source = $@"
-                writer.WriteStartArray();
-                if (value.{m.Name.ToUpperCamel()} != null)
-                {{
-                    foreach (var element in value.{m.Name.ToUpperCamel()})
-                        {GenWriteValueSource(m, true, "element")}
-                }}
-                writer.WriteEndArray();";
+                    writer.WriteStartArray();
+                    if (value.{m.Name.ToUpperCamel()} != null)
+                    {{
+                        foreach (var element in value.{m.Name.ToUpperCamel()})
+                            {GenWriteValueSource(m, true, "element")}
+                    }}
+                    writer.WriteEndArray();";
                     break;
 
                 default:
@@ -340,7 +346,12 @@ namespace {RootNamespace}
         {
             var source = $@"
                 writer.WritePropertyName(""{m.Name.ToLowerCamel()}"");
-                {GenWriteValueSource(m)}";
+                if (value.{m.Name.ToUpperCamel()} == null)
+                    writer.WriteNullValue();
+                else
+                {{
+                    {GenWriteValueSource(m)}
+                }}";
 
             return source;
         }
@@ -359,26 +370,31 @@ namespace {RootNamespace}
                     case MemberType.Boolean:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
+                                    if (reader.TokenType == JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.Int:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
+                                    if (reader.TokenType == JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.Long:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
+                                    if (reader.TokenType == JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.String:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
+                                    if (reader.TokenType == JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.Object:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
+                                    if (reader.TokenType == JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.BooleanList:
@@ -422,10 +438,13 @@ namespace {RootNamespace}
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static void Read(ref Utf8JsonReader reader, {classDef.FullName} obj)
             {{
+                if (reader.TokenType == JsonTokenType.Null)
+                    return;
                 bool readToEnd = false;
                 do
                 {{
                     reader.Read();
+                    
                     switch (reader.TokenType)
                     {{
                         case JsonTokenType.EndObject:

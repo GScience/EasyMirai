@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="FileInfo"
+	 desc="文件信息" >
+	<val name="name" type="String" desc="文件名"/>
+	<val name="id" type="String" desc="文件ID"/>
+	<val name="path" type="String" desc="文件路径"/>
+	<val name="isFile" type="Boolean" desc="是否文件"/>
+	<val name="isDirectory" type="Boolean" desc="是否文件夹"/>
+	
+	<obj name="contact" desc="群信息或好友信息">
+		<val name="id" type="Long" desc="QQ Id"/>
+		<val name="name" type="String" desc="成员名"/>
+		<val name="permission" type="String" desc="成员权限"/>
+	</obj>
+
+	<obj name="downloadInfo" desc="文件下载信息">
+		<val name="sha1" type="String" desc="文件sha1校验"/>
+		<val name="md5" type="String" desc="文件md5校验"/>
+		<val name="downloadTimes" type="Long" desc="文件下载url"/>
+		<val name="uploaderId" type="Long" desc="上传者Id"/>
+		<val name="uploadTime" type="Long" desc="上传时间"/>
+		<val name="lastModifyTime" type="Long" desc="最后修改时间"/>
+		<val name="url" type="String" desc="文件下载url"/>
+	</obj>
+	
+	<ref name="parent" ref="FileInfo" desc="文件对象, 递归类型. null 为存在根目录"/>
+</object>

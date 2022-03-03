@@ -12,6 +12,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Message")}\n
+#nullable enable
 using System;
 using System.Text.Json.Serialization;
 
@@ -22,7 +23,7 @@ namespace {RootNamespace}
     
     }}
 }}
-";
+#nullable restore";
             return source;
         }
 

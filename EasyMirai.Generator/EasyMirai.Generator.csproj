@@ -7,16 +7,27 @@
 
   <ItemGroup>
     <None Remove="Protocol\Common\Object\Client.xml" />
+    <None Remove="Protocol\Common\Object\FileInfo.xml" />
     <None Remove="Protocol\Common\Object\Friend.xml" />
     <None Remove="Protocol\Common\Object\Group.xml" />
     <None Remove="Protocol\Common\Object\Member.xml" />
     <None Remove="Protocol\v2_5_0\Api\About.xml" />
     <None Remove="Protocol\v2_5_0\Api\Bind.xml" />
+    <None Remove="Protocol\v2_5_0\Api\BotProfile.xml" />
+    <None Remove="Protocol\v2_5_0\Api\FileList.xml" />
+    <None Remove="Protocol\v2_5_0\Api\FriendList.xml" />
+    <None Remove="Protocol\v2_5_0\Api\FriendProfile.xml" />
     <None Remove="Protocol\v2_5_0\Api\GroupList.xml" />
+    <None Remove="Protocol\v2_5_0\Api\MemberList.xml" />
+    <None Remove="Protocol\v2_5_0\Api\MemberProfile.xml" />
     <None Remove="Protocol\v2_5_0\Api\messageFromId.xml" />
+    <None Remove="Protocol\v2_5_0\Api\Recall.xml" />
     <None Remove="Protocol\v2_5_0\Api\Release.xml" />
     <None Remove="Protocol\v2_5_0\Api\SendFriendMessage.xml" />
     <None Remove="Protocol\v2_5_0\Api\SendGroupMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Api\SendNudge.xml" />
+    <None Remove="Protocol\v2_5_0\Api\SendTempMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Api\UserProfile.xml" />
     <None Remove="Protocol\v2_5_0\Api\Verify.xml" />
     <None Remove="Protocol\v2_5_0\Event\FriendMessage.xml" />
     <None Remove="Protocol\v2_5_0\Event\GroupMessage.xml" />
@@ -45,10 +56,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Protocol\Common\Object\FileInfo.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Client.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Friend.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Group.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Member.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\Recall.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\FileList.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\SendNudge.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\SendTempMessage.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\UserProfile.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\MemberProfile.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\FriendProfile.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\BotProfile.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\MemberList.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\FriendList.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\MessageFromId.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\About.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\Bind.xml" />

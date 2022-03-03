@@ -86,6 +86,7 @@ namespace EasyMirai.Generator
                 return ClassTable[apiDef];
 
             var classDef = new ClassDef(apiDef.Name, apiDef.Description, null);
+            ClassTable[apiDef] = classDef;
 
             classDef.Version = apiDef.ProtocolVersion;
             classDef.Category = CategoryApi;
@@ -128,8 +129,6 @@ namespace EasyMirai.Generator
 
             classDef.Classes.Add(requestClass); 
             classDef.Classes.Add(responseClass);
-
-            ClassTable[apiDef] = classDef;
 
             return classDef;
         }
@@ -183,6 +182,7 @@ namespace EasyMirai.Generator
                 return ClassTable[obj];
 
             var classDef = new ClassDef(obj.Name, obj.Description, objBase);
+            ClassTable[obj] = classDef;
 
             classDef.Version = obj.ProtocolVersion;
             classDef.Category = category;

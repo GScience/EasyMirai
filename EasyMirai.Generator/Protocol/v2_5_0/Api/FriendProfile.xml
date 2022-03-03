@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="FriendProfile"
+	 desc="获取好友资料" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="指定好友账号"/>
+	</request>
+	
+	<response>
+		<val name="nickname" type="String" desc="昵称"/>
+		<val name="email" type="String" desc="邮箱"/>
+		<val name="age" type="Int" desc="年龄"/>
+		<val name="level" type="Int" desc="等级"/>
+		<val name="sign" type="String" desc="sign"/>
+		<val name="sex" type="String" desc="性别"/>
+	</response>
+
+	<adapter>
+		<http cmd="/friendProfile" method="Get" desc="此接口获取 session 绑定 bot 的详细资料"/>
+		<ws cmd="friendProfile" desc="此接口获取 session 绑定 bot 的详细资料"/>
+	</adapter>
+</api>

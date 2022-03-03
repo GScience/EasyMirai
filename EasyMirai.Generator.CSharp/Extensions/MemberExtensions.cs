@@ -102,12 +102,12 @@ namespace EasyMirai.Generator.CSharp.Extensions
         /// <param name="memberDef"></param>
         /// <param name="useLowerCamel"></param>
         /// <returns></returns>
-        public static string GetCSharpMemberDefine(this MemberDef memberDef, bool useLowerCamel = false)
+        public static string GetCSharpMemberDefine(this MemberDef memberDef, bool useLowerCamel = false, bool allowNull = false)
         {
             var memberTypeName = GetCSharpMemberType(memberDef);
             if (useLowerCamel)
-                return $"{memberTypeName} {memberDef.Name.ToLowerCamel()}";
-            return $"{memberTypeName} {memberDef.Name.ToUpperCamel()}";
+                return $"{memberTypeName}{(allowNull ? "?" : "")} {memberDef.Name.ToLowerCamel()}";
+            return $"{memberTypeName}{(allowNull ? "?" : "")} {memberDef.Name.ToUpperCamel()}";
         }
 
         /// <summary>

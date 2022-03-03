@@ -24,7 +24,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// </summary>
         /// <param name="classDef"></param>
         /// <returns></returns>
-        public static string GenClassSource(ClassDef classDef, int depth = 0, string extraCode = "", string extraInterface = "")
+        public static string GenClassSource(ClassDef classDef, int depth = 0, string extraCode = "", string extraInterface = "", bool allowNull = false)
         {
             var newLine = Environment.NewLine + new string('\t', depth);
 
@@ -34,7 +34,7 @@ namespace EasyMirai.Generator.CSharp.Generator
             // 内部类型定义
             var innerClassDefs = classDef.Classes.Select(innerClassDef =>
             {
-                return GenClassSource(innerClassDef, depth + 1);
+                return GenClassSource(innerClassDef, depth + 1, allowNull: true);
             });
 
             // 成员定义
@@ -46,7 +46,7 @@ namespace EasyMirai.Generator.CSharp.Generator
                 return
                     $"{newLine}\t{memberComment}" +
                     $"{newLine}\t{jsonPropertyName}" +
-                    $"{newLine}\tpublic {memberDef.GetCSharpMemberDefine()} {{ get; set; }}";
+                    $"{newLine}\tpublic {memberDef.GetCSharpMemberDefine(allowNull:allowNull)} {{ get; set; }}";
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
@@ -107,7 +107,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             string source = $@"{base.GenerateFrom(classDef, namespaceDef)}
-
+#nullable enable
 using System;
 using System.Collections;
 using System.Text.Json.Serialization;
@@ -120,9 +120,9 @@ namespace {namespaceDef}
 {{
     /// <remarks>
     /// Version: {classDef.Version}
-    /// </remarks> { GenClassSource(classDef, 1, GenerateExtraCode(classDef), GenerateExtraInterface(classDef)) }
+    /// </remarks> { GenClassSource(classDef, 1, GenerateExtraCode(classDef), GenerateExtraInterface(classDef), true) }
 }}
-";
+#nullable restore";
             return source;
         }
 

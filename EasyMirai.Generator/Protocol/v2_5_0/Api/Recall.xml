@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Recall"
+	 desc="撤回消息" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Int" desc="需要撤回的消息的messageId"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/sendNudge" method="Post" desc="撤回消息"/>
+		<ws cmd="sendNudge" desc="撤回消息"/>
+	</adapter>
+</api>

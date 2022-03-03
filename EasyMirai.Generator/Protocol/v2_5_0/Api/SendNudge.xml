@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="SendNudge"
+	 desc="发送头像戳一戳消息" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="戳一戳的目标, QQ号, 可以为 bot QQ号"/>
+		<val name="subject" type="Long" desc="戳一戳接受主体(上下文), 戳一戳信息会发送至该主体, 为群号/好友QQ号"/>
+		<val name="kind" type="String" desc="上下文类型, 可选值 Friend, Group, Stranger"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/sendNudge" method="Post" desc="使用此方法发送头像戳一戳消息"/>
+		<ws cmd="sendNudge" desc="使用此方法发送头像戳一戳消息"/>
+	</adapter>
+</api>
