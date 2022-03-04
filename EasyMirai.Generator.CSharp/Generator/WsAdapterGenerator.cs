@@ -18,6 +18,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         public override void PreProcessing(ClassDef classDef)
         {
             base.PreProcessing(classDef);
+            classDef.Namespace = MiraiSource.RootNamespace;
             var apiFuncs = classDef.Members.Values.Where(
                 m => m.Type == MemberType.Object &&
                 m.Reference.Category == MiraiModule.CategoryIFunctione);

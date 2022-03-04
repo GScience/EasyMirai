@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="FileUpload"
+	 desc="群文件上传" >
+	<request>
+		<val name="sessionKey" type="String" desc="已经激活的Session"/>
+		<val name="type" type="String" desc="当前仅支持 group"/>
+		<val name="target" type="String" desc="上传目标群号"/>
+		<val name="path" type="Long" desc="上传目录的id, 空串为上传到根目录"/>
+		<val name="file" type="File" desc="上传的文件"/>
+	</request>
+	
+	<response>
+		<val name="name" type="String" desc="文件名"/>
+		<val name="id" type="String" desc="文件ID"/>
+		<val name="path" type="String" desc="文件路径"/>
+		<val name="isFile" type="Boolean" desc="是否文件"/>
+		<val name="isDirectory" type="Boolean" desc="是否文件夹"/>
+		<val name="isDictionary" type="Boolean" desc="是否文件夹(弃用)"/>
+		<obj name="contact" desc="群信息或好友信息">
+			<val name="id" type="Long" desc="QQ Id"/>
+			<val name="name" type="String" desc="成员名"/>
+			<val name="permission" type="String" desc="成员权限"/>
+		</obj>
+	</response>
+
+	<adapter>
+		<http cmd="/file/upload" method="Post" desc="使用此方法上传群文件" content="multipart/form-data"/>
+	</adapter>
+</api>

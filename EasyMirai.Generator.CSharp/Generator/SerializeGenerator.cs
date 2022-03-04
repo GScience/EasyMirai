@@ -16,6 +16,11 @@ namespace EasyMirai.Generator.CSharp.Generator
         public static string RootNamespace = $"{MiraiSource.RootNamespace}.Util";
         public static string SerializerClassName = "MiraiJsonSerializers";
 
+        public static string GetFullNameOf(string className)
+        {
+            return $"global::{RootNamespace}.{SerializerClassName}.{className}";
+        }
+
         /// <summary>
         /// 是否生成序列化代码
         /// </summary>
@@ -38,6 +43,8 @@ namespace EasyMirai.Generator.CSharp.Generator
 
         MessageGenerator _messageGenerator;
         EventGenerator _eventGenerator;
+        IMessageGenerator _iMessageGenerator;
+        IEventGenerator _iEventGenerator;
 
         /// <summary>
         /// 生成序列化代码
@@ -47,6 +54,8 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             _messageGenerator = SourceGeneratorTable[MiraiModule.CategoryMessage] as MessageGenerator;
             _eventGenerator = SourceGeneratorTable[MiraiModule.CategoryEvent] as EventGenerator;
+            _iMessageGenerator = SourceGeneratorTable[MiraiModule.CategoryIMessage] as IMessageGenerator;
+            _iEventGenerator = SourceGeneratorTable[MiraiModule.CategoryIEvent] as IEventGenerator;
 
             var source = GenerateSourceHead();
 
@@ -74,6 +83,9 @@ using {MessageGenerator.RootNamespace};
 
 namespace {RootNamespace}
 {{
+    using {GetClassConverterName(_iMessageGenerator.InterfaceDef)} = {SerializerClassName}.IMessageConverter;
+    using {GetClassConverterName(_iEventGenerator.InterfaceDef)} = {SerializerClassName}.IEventConverter;
+
     public static partial class {SerializerClassName}
     {{{converterClassesSource}
         public partial class ConverterWrapper<T> where T : ISerializable<T>, new()
@@ -493,7 +505,12 @@ namespace {RootNamespace}
 
         private static string ReplaceIllegalNameChar(string name)
         {
-            return name.Replace('.', '_').Replace('>', '_').Replace('<', '_');
+            return new string(name.Select(c =>
+            {
+                if (c == '<' || c == '>' || c == ':' || c == '.')
+                    return '_';
+                return c;
+            }).ToArray());
         }
     }
 }

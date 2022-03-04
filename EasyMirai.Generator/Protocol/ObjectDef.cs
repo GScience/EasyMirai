@@ -10,7 +10,7 @@ namespace EasyMirai.Generator.Protocol
 {
     public enum ValDef
     {
-        Boolean, Int, Long, String
+        Boolean, Int, Long, String, File
     };
 
     /// <summary>

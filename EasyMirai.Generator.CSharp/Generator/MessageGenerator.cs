@@ -14,6 +14,12 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// </summary>
         public Dictionary<ClassDef, string> MessageTable = new Dictionary<ClassDef, string>();
 
+        public override void PreProcessing(ClassDef classDef)
+        {
+            base.PreProcessing(classDef);
+            classDef.Namespace = RootNamespace;
+        }
+
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             var type = classDef.ConstString["Type"].value;
@@ -30,7 +36,7 @@ namespace EasyMirai.Generator.CSharp.Generator
 
         protected override string GenerateExtraInterface(ClassDef classDef)
         {
-            return $@"MiraiJsonSerializers.ISerializableMessage";
+            return SerializeGenerator.GetFullNameOf("ISerializableMessage");
         }
 
         public override string GetClassDir(ClassDef classDef)

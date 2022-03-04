@@ -26,6 +26,11 @@ namespace EasyMirai.Generator.Module
         /// 基类
         /// </summary>
         public ClassDef Base { get; set; }
+        
+        /// <summary>
+        /// 命名空间
+        /// </summary>
+        public string Namespace { get; set; }
 
         /// <summary>
         /// 类型所有者
@@ -40,7 +45,19 @@ namespace EasyMirai.Generator.Module
         /// <summary>
         /// 全名
         /// </summary>
-        public string FullName => Owner == null ? Name : $"{Owner.FullName}.{Name}";
+        public string FullName
+        {
+            get
+            {
+                if (Owner == null)
+                {
+                    if (string.IsNullOrEmpty(Namespace))
+                        return $"global::{Name}";
+                    return $"global::{Namespace}.{Name}";
+                }
+                return $"{Owner.FullName}.{Name}";
+            }
+        }
 
         /// <summary>
         /// 类型分类，用于后续代码生成器的选择

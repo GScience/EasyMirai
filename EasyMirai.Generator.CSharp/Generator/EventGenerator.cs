@@ -13,7 +13,11 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// 事件表，消息类型与对应序列化类型
         /// </summary>
         public Dictionary<ClassDef, string> EventTable = new Dictionary<ClassDef, string>();
-
+        public override void PreProcessing(ClassDef classDef)
+        {
+            base.PreProcessing(classDef);
+            classDef.Namespace = RootNamespace;
+        }
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             var type = classDef.ConstString["Type"].value;
@@ -30,7 +34,7 @@ namespace EasyMirai.Generator.CSharp.Generator
 
         protected override string GenerateExtraInterface(ClassDef classDef)
         {
-            return $@"MiraiJsonSerializers.ISerializableEvent";
+            return SerializeGenerator.GetFullNameOf("ISerializableEvent");
         }
 
         public override string GetClassDir(ClassDef classDef)

@@ -17,7 +17,10 @@
     <None Remove="Protocol\v2_5_0\Api\CountMessage.xml" />
     <None Remove="Protocol\v2_5_0\Api\FetchLatestMessage.xml" />
     <None Remove="Protocol\v2_5_0\Api\FetchMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Api\FileInfo.xml" />
     <None Remove="Protocol\v2_5_0\Api\FileList.xml" />
+    <None Remove="Protocol\v2_5_0\Api\FileMkdir.xml" />
+    <None Remove="Protocol\v2_5_0\Api\FileUpload.xml" />
     <None Remove="Protocol\v2_5_0\Api\FriendList.xml" />
     <None Remove="Protocol\v2_5_0\Api\FriendProfile.xml" />
     <None Remove="Protocol\v2_5_0\Api\GroupList.xml" />
@@ -103,6 +106,9 @@
     <EmbeddedResource Include="Protocol\Common\Object\Friend.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Group.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Member.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\FileUpload.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\FileMkdir.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\FileInfo.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\PeekLatestMessage.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\PeekMessage.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\FetchLatestMessage.xml" />

@@ -35,6 +35,11 @@ session.WsAdapter.EventHookTable.GroupMessage = async (groupMessage) =>
             await session.WsAdapter.SendGroupMessageAsync(group: groupMessage.Sender!.Group!.Id, messageChain: new[] { new PlainMessage { Text = "在这呢" } });
 };
 
+session.WsAdapter.EventHookTable.FriendMessage = async (friendMessage) =>
+{
+    await session.WsAdapter.SendFriendMessageAsync(qq: friendMessage.Sender!.Id, messageChain:friendMessage.MessageChain!);
+};
+
 while (true)
 {
     Console.ReadLine();

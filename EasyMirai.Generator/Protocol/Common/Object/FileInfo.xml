@@ -7,6 +7,7 @@
 	<val name="path" type="String" desc="文件路径"/>
 	<val name="isFile" type="Boolean" desc="是否文件"/>
 	<val name="isDirectory" type="Boolean" desc="是否文件夹"/>
+	<val name="isDictionary" type="Boolean" desc="是否文件夹(弃用)"/>
 	
 	<obj name="contact" desc="群信息或好友信息">
 		<val name="id" type="Long" desc="QQ Id"/>

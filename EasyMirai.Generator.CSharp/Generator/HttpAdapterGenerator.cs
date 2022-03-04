@@ -13,10 +13,10 @@ namespace EasyMirai.Generator.CSharp.Generator
 
         public List<(string name, ClassDef apiDef, string cmd, string method, string contentType)> ApiList
                = new List<(string name, ClassDef apiDef, string cmd, string method, string contentType)>();
-
         public override void PreProcessing(ClassDef classDef)
         {
             base.PreProcessing(classDef);
+            classDef.Namespace = RootNamespace;
             var apiFuncs = classDef.Members.Values.Where(
                 m => m.Type == MemberType.Object &&
                 m.Reference.Category == MiraiModule.CategoryIFunctione);

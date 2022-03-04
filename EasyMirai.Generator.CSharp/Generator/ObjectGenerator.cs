@@ -17,6 +17,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         public override void PreProcessing(ClassDef classDef)
         {
             base.PreProcessing(classDef);
+            classDef.Namespace = MiraiSource.RootNamespace;
         }
 
         /// <summary>
@@ -50,21 +51,21 @@ namespace EasyMirai.Generator.CSharp.Generator
             });
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
-            var converterName = $"{SerializeGenerator.SerializerClassName}.{SerializeGenerator.GetClassConverterName(classDef)}";
+            var converterFullName = SerializeGenerator.GetFullNameOf($"{SerializeGenerator.GetClassConverterName(classDef)}");
             var classConverterDefineSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"public static {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> defaultConverter = new ({converterName}.Read, {converterName}.Write);"
+                    ? $"public static {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> defaultConverter = new ({converterFullName}.Read, {converterFullName}.Write);"
                     : "";
             var classConverterGetterSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"[JsonIgnore] public {SerializeGenerator.SerializerClassName}.ConverterWrapper<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
+                    ? $"[JsonIgnore] public {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
                     : "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
 
             var classSerializable
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"{(string.IsNullOrEmpty(baseClassSource) ? " :" : ",")} {SerializeGenerator.SerializerClassName}.ISerializable<{classDef.FullName}>"
+                    ? $"{(string.IsNullOrEmpty(baseClassSource) ? " :" : ",")} {SerializeGenerator.GetFullNameOf("ISerializable")}<{classDef.FullName}>"
                     : "";
 
             if (!string.IsNullOrEmpty(extraInterface))
@@ -111,10 +112,6 @@ namespace EasyMirai.Generator.CSharp.Generator
 using System;
 using System.Collections;
 using System.Text.Json.Serialization;
-using {EventGenerator.RootNamespace};
-using {MessageGenerator.RootNamespace};
-using {ApiGenerator.RootNamespace};
-using {SerializeGenerator.RootNamespace};
 
 namespace {namespaceDef}
 {{

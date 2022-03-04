@@ -19,6 +19,7 @@
 								<xs:enumeration value="Int" />
 								<xs:enumeration value="Long" />
 								<xs:enumeration value="String" />
+								<xs:enumeration value="File" />
 							</xs:restriction>
 						</xs:simpleType>
 					</xs:attribute>

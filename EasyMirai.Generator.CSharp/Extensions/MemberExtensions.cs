@@ -13,7 +13,7 @@ namespace EasyMirai.Generator.CSharp.Extensions
         /// <summary>
         /// C# 中列表对应类型
         /// </summary>
-        public static string List = "IEnumerable";
+        public static string List = "System.Collections.Generic.IEnumerable";
 
         /// <summary>
         /// 获取成员对应 C# 类型
@@ -55,6 +55,9 @@ namespace EasyMirai.Generator.CSharp.Extensions
                     break;
                 case MemberType.ObjectList:
                     memberTypeName = $"{List}<{memberDef.Reference.FullName}>";
+                    break;
+                case MemberType.FileStream:
+                    memberTypeName = $"System.IO.Stream";
                     break;
                 default:
                     throw new NotImplementedException($"Unknown type {memberDef.Type}");

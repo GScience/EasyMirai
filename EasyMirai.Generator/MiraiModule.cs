@@ -210,6 +210,9 @@ namespace EasyMirai.Generator
                     case ValDef.String:
                         memberType = MemberType.String;
                         break;
+                    case ValDef.File:
+                        memberType = MemberType.FileStream;
+                        break;
                     default:
                         throw new NotImplementedException();
                 };

@@ -12,7 +12,8 @@ namespace EasyMirai.Generator.Module
     public enum MemberType
     {
         Boolean, Int, Long, String, Object,
-        BooleanList, IntList, LongList, StringList, ObjectList
+        BooleanList, IntList, LongList, StringList, ObjectList,
+        FileStream
     };
 
     /// <summary>
@@ -68,6 +69,8 @@ namespace EasyMirai.Generator.Module
                 case MemberType.StringList:
                     var typeStr = Type.ToString();
                     return $"List<{typeStr.Substring(0, typeStr.Length - 4)}> {Name}; // {Description}";
+                case MemberType.FileStream:
+                    return $"FileStream {Name}; // {Description}";
                 default:
                     throw new NotImplementedException($"Unknown type {Type}");
             }

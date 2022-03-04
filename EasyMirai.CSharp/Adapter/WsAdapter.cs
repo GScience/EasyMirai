@@ -240,6 +240,7 @@ namespace EasyMirai.CSharp.Adapter
             // Send request
             WriteWsRequestPackage(arrayBuffer, package);
             bool lockWasTaken = false;
+            var str = Encoding.UTF8.GetString(arrayBuffer.WrittenSpan);
             try
             {
                 Monitor.Enter(_wsSendLock, ref lockWasTaken);

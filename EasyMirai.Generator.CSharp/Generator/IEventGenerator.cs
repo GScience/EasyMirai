@@ -9,6 +9,15 @@ namespace EasyMirai.Generator.CSharp.Generator
     {
         public static string RootNamespace => $"{MiraiSource.RootNamespace}.Event";
 
+        public ClassDef InterfaceDef { get; private set; }
+
+        public override void PreProcessing(ClassDef classDef)
+        {
+            base.PreProcessing(classDef);
+            classDef.Namespace = RootNamespace;
+            InterfaceDef = classDef;
+        }
+
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {
             string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Event")}\n
