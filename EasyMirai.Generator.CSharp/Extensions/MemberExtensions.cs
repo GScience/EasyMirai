@@ -13,7 +13,7 @@ namespace EasyMirai.Generator.CSharp.Extensions
         /// <summary>
         /// C# 中列表对应类型
         /// </summary>
-        public static string List = "System.Collections.Generic.IEnumerable";
+        public static string List = "global::System.Collections.Generic.IEnumerable";
 
         /// <summary>
         /// 获取成员对应 C# 类型
