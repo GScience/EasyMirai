@@ -22,9 +22,6 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Message")}\n
 #nullable enable
-using System;
-using System.Text.Json.Serialization;
-
 namespace {RootNamespace}
 {{
     public interface {classDef.Name}

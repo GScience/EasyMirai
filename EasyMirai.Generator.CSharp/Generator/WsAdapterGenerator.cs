@@ -79,13 +79,6 @@ namespace EasyMirai.Generator.CSharp.Generator
 
             string source = $@"{base.GenerateFrom(classDef, namespaceDef + ".Adapter")}
 #nullable enable
-using System;
-using System.Text.Json.Serialization;
-using {EventGenerator.RootNamespace};
-using {MessageGenerator.RootNamespace};
-using {ApiGenerator.RootNamespace};
-using {SerializeGenerator.RootNamespace};
-
 namespace {RootNamespace}
 {{
     /// <summary>

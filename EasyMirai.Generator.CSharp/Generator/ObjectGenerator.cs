@@ -42,7 +42,7 @@ namespace EasyMirai.Generator.CSharp.Generator
             var memberDefs = classDef.Members.Values.Select(memberDef =>
             {
                 var memberComment = $"/// <summary>{newLine}\t/// {memberDef.Description}{newLine}\t/// </summary>";
-                var jsonPropertyName = $"[JsonPropertyName(\"{memberDef.Name}\")]";
+                var jsonPropertyName = $"[global::System.Text.Json.Serialization.JsonPropertyName(\"{memberDef.Name}\")]";
 
                 return
                     $"{newLine}\t{memberComment}" +
@@ -54,11 +54,15 @@ namespace EasyMirai.Generator.CSharp.Generator
             var converterFullName = SerializeGenerator.GetFullNameOf($"{SerializeGenerator.GetClassConverterName(classDef)}");
             var classConverterDefineSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"public static {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> defaultConverter = new ({converterFullName}.Read, {converterFullName}.Write);"
+                    ? $"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
+                    $"public static {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> defaultConverter " +
+                    $"= new ({converterFullName}.Read, {converterFullName}.Write);"
                     : "";
             var classConverterGetterSource
                 = SerializeGenerator.GenerateSerializeSource
-                    ? $"[JsonIgnore] public {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> DefaultConverter => {classDef.Name}.defaultConverter;"
+                    ? $"[global::System.Text.Json.Serialization.JsonIgnore] [global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
+                    $"public {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> DefaultConverter " +
+                    $"=> {classDef.Name}.defaultConverter;"
                     : "";
 
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
@@ -109,10 +113,6 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             string source = $@"{base.GenerateFrom(classDef, namespaceDef)}
 #nullable enable
-using System;
-using System.Collections;
-using System.Text.Json.Serialization;
-
 namespace {namespaceDef}
 {{
     /// <remarks>

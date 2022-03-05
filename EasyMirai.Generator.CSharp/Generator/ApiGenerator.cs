@@ -26,12 +26,6 @@ namespace EasyMirai.Generator.CSharp.Generator
 
             source += $@"
 #nullable enable
-using System;
-using System.Text.Json.Serialization;
-using {EventGenerator.RootNamespace};
-using {MessageGenerator.RootNamespace};
-using {SerializeGenerator.RootNamespace};
-
 namespace {RootNamespace}
 {{
     /// <summary>

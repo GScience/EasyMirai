@@ -73,14 +73,6 @@ namespace EasyMirai.Generator.CSharp.Generator
             {pair.Key} = DefaultOptions.GetConverter(typeof({pair.Value}));"));
 
                 source += $@"
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Runtime.CompilerServices;
-using {ApiGenerator.RootNamespace};
-using {EventGenerator.RootNamespace};
-using {MessageGenerator.RootNamespace};
-
 namespace {RootNamespace}
 {{
     using {GetClassConverterName(_iMessageGenerator.InterfaceDef)} = {SerializerClassName}.IMessageConverter;
@@ -90,8 +82,8 @@ namespace {RootNamespace}
     {{{converterClassesSource}
         public sealed partial class ConverterWrapper<T> where T : ISerializable<T>, new()
         {{
-            internal delegate void ReadDelegate(ref Utf8JsonReader reader, T obj);
-            internal delegate void WriteDelegate(Utf8JsonWriter writer, T value);
+            internal delegate void ReadDelegate(ref global::System.Text.Json.Utf8JsonReader reader, T obj);
+            internal delegate void WriteDelegate(global::System.Text.Json.Utf8JsonWriter writer, T value);
 
             internal ReadDelegate ReadHandler {{ get; }}
             internal WriteDelegate WriteHandler {{ get; }}
@@ -171,7 +163,7 @@ namespace {RootNamespace}
                     break;"));
 
             var source = $@"
-        internal static void WriteISerializableMessage(Utf8JsonWriter writer, ISerializableMessage message)
+        internal static void WriteISerializableMessage(global::System.Text.Json.Utf8JsonWriter writer, ISerializableMessage message)
         {{
             switch (message.Type)
             {{
@@ -195,7 +187,7 @@ namespace {RootNamespace}
                     return (ISerializableMessage)obj{pair.Value};"));
 
             var source = $@"
-        internal static ISerializableMessage ReadISerializableMessage(ref Utf8JsonReader reader)
+        internal static ISerializableMessage ReadISerializableMessage(ref global::System.Text.Json.Utf8JsonReader reader)
         {{
             var type = GetJsonObjectType(reader);
             switch (type)
@@ -218,7 +210,7 @@ namespace {RootNamespace}
                     break;"));
 
             var source = $@"
-        internal static void WriteISerializableEvent(Utf8JsonWriter writer, ISerializableEvent e)
+        internal static void WriteISerializableEvent(global::System.Text.Json.Utf8JsonWriter writer, ISerializableEvent e)
         {{
             switch (e.Type)
             {{
@@ -245,7 +237,7 @@ namespace {RootNamespace}
                     return (ISerializableEvent)obj{pair.Value};"));
 
             var source = $@"
-        internal static ISerializableEvent ReadISerializableEvent(ref Utf8JsonReader reader, EventSerializeHookTable hookTable = null)
+        internal static ISerializableEvent ReadISerializableEvent(ref global::System.Text.Json.Utf8JsonReader reader, EventSerializeHookTable hookTable = null)
         {{
             var type = GetJsonObjectType(reader);
             switch (type)
@@ -349,7 +341,7 @@ namespace {RootNamespace}
                                     while(true)
                                     {{
                                         reader.Read();
-                                        if (reader.TokenType == JsonTokenType.EndArray)
+                                        if (reader.TokenType == global::System.Text.Json.JsonTokenType.EndArray)
                                             break;
                                         list.Add({GenReadValueSource(m, true)});
                                     }}";
@@ -388,31 +380,31 @@ namespace {RootNamespace}
                     case MemberType.Boolean:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
-                                    if (reader.TokenType == JsonTokenType.Null) break;
+                                    if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.Int:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
-                                    if (reader.TokenType == JsonTokenType.Null) break;
+                                    if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.Long:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
-                                    if (reader.TokenType == JsonTokenType.Null) break;
+                                    if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.String:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
-                                    if (reader.TokenType == JsonTokenType.Null) break;
+                                    if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.Object:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":
-                                    if (reader.TokenType == JsonTokenType.Null) break;
+                                    if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null) break;
                                     obj.{m.Name.ToUpperCamel()} = {GenReadValueSource(m)};
                                     break;";
                     case MemberType.BooleanList:
@@ -448,17 +440,17 @@ namespace {RootNamespace}
             var converterSource = $@"
         internal static class {GetClassConverterName(classDef)}
         {{
-            public static {classDef.FullName} Read(ref Utf8JsonReader reader)
+            public static {classDef.FullName} Read(ref global::System.Text.Json.Utf8JsonReader reader)
             {{
                 var obj = new {classDef.FullName}();
                 Read(ref reader, obj);
                 return obj;
             }}
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static void Read(ref Utf8JsonReader reader, {classDef.FullName} obj)
+            [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            public static void Read(ref global::System.Text.Json.Utf8JsonReader reader, {classDef.FullName} obj)
             {{
-                if (reader.TokenType == JsonTokenType.Null)
+                if (reader.TokenType == global::System.Text.Json.JsonTokenType.Null)
                     return;
                 bool readToEnd = false;
                 do
@@ -467,10 +459,10 @@ namespace {RootNamespace}
                     
                     switch (reader.TokenType)
                     {{
-                        case JsonTokenType.EndObject:
+                        case global::System.Text.Json.JsonTokenType.EndObject:
                             readToEnd = true;
                             break;
-                        case JsonTokenType.PropertyName:
+                        case global::System.Text.Json.JsonTokenType.PropertyName:
                             var propertyName = reader.GetString();
                             reader.Read();
                             switch (propertyName)
@@ -485,8 +477,8 @@ namespace {RootNamespace}
                 }} while (!readToEnd);
             }}
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static void Write(Utf8JsonWriter writer, {classDef.FullName} value)
+            [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+            public static void Write(global::System.Text.Json.Utf8JsonWriter writer, {classDef.FullName} value)
             {{
                 if (value == null)
                 {{
