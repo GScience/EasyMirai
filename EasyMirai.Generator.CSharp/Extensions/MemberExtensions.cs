@@ -56,7 +56,7 @@ namespace EasyMirai.Generator.CSharp.Extensions
                 case MemberType.ObjectList:
                     memberTypeName = $"{List}<{memberDef.Reference.FullName}>";
                     break;
-                case MemberType.FileStream:
+                case MemberType.Stream:
                     memberTypeName = $"System.IO.Stream";
                     break;
                 default:

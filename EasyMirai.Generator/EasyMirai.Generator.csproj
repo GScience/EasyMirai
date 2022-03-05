@@ -35,6 +35,7 @@
     <None Remove="Protocol\v2_5_0\Api\SendGroupMessage.xml" />
     <None Remove="Protocol\v2_5_0\Api\SendNudge.xml" />
     <None Remove="Protocol\v2_5_0\Api\SendTempMessage.xml" />
+    <None Remove="Protocol\v2_5_0\Api\UploadImage.xml" />
     <None Remove="Protocol\v2_5_0\Api\UserProfile.xml" />
     <None Remove="Protocol\v2_5_0\Api\Verify.xml" />
     <None Remove="Protocol\v2_5_0\Event\BotGroupPermissionChangeEvent.xml" />
@@ -106,6 +107,7 @@
     <EmbeddedResource Include="Protocol\Common\Object\Friend.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Group.xml" />
     <EmbeddedResource Include="Protocol\Common\Object\Member.xml" />
+    <EmbeddedResource Include="Protocol\v2_5_0\Api\UploadImage.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\FileUpload.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\FileMkdir.xml" />
     <EmbeddedResource Include="Protocol\v2_5_0\Api\FileInfo.xml" />

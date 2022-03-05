@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="UploadImage"
+	 desc="图片文件上传" >
+	<request>
+		<val name="sessionKey" type="String" desc="已经激活的Session"/>
+		<val name="type" type="String" desc="friend 或 group 或 temp"/>
+		<val name="img" type="File" desc="图片文件"/>
+		<val name="uploadName" type="String" desc="上传的图片文件名（额外参数，在EasyMirai中使用）"/>
+	</request>
+	
+	<response>
+		<val name="imageId" type="String" desc="图像Id"/>
+		<val name="url" type="String" desc="图像链接"/>
+	</response>
+
+	<adapter>
+		<http cmd="/uploadImage" method="Post" desc="使用此方法上传图片文件" content="multipart/form-data"/>
+	</adapter>
+</api>

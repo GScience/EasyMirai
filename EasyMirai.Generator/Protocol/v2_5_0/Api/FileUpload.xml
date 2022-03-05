@@ -8,6 +8,7 @@
 		<val name="target" type="String" desc="上传目标群号"/>
 		<val name="path" type="Long" desc="上传目录的id, 空串为上传到根目录"/>
 		<val name="file" type="File" desc="上传的文件"/>
+		<val name="uploadName" type="String" desc="上传的文件名（额外参数，在EasyMirai中使用）"/>
 	</request>
 	
 	<response>

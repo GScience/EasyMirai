@@ -309,6 +309,10 @@ namespace {RootNamespace}
                     writer.WriteEndArray();";
                     break;
 
+                case MemberType.Stream:
+                    source = "";
+                    break;
+
                 default:
                     source = $@"throw new NotImplementedException();";
                     break;
@@ -349,6 +353,8 @@ namespace {RootNamespace}
                                             break;
                                         list.Add({GenReadValueSource(m, true)});
                                     }}";
+                case MemberType.Stream:
+                    return "";
                 default:
                     return $@"throw new NotImplementedException()";
             }
@@ -419,6 +425,8 @@ namespace {RootNamespace}
                                     {GenReadValueSource(m)};
                                     obj.{m.Name.ToUpperCamel()} = list;
                                     break;";
+                    case MemberType.Stream:
+                        return "";
                     default:
                         return $@"
                                 case ""{m.Name.ToLowerCamel()}"":

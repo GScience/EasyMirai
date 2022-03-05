@@ -13,7 +13,7 @@ namespace EasyMirai.Generator.Module
     {
         Boolean, Int, Long, String, Object,
         BooleanList, IntList, LongList, StringList, ObjectList,
-        FileStream
+        Stream
     };
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace EasyMirai.Generator.Module
                 case MemberType.StringList:
                     var typeStr = Type.ToString();
                     return $"List<{typeStr.Substring(0, typeStr.Length - 4)}> {Name}; // {Description}";
-                case MemberType.FileStream:
+                case MemberType.Stream:
                     return $"FileStream {Name}; // {Description}";
                 default:
                     throw new NotImplementedException($"Unknown type {Type}");

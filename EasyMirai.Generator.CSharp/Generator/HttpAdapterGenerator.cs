@@ -67,9 +67,9 @@ namespace EasyMirai.Generator.CSharp.Generator
         /// {api.apiDef.Description}
         /// </summary>
         /// <returns>Response</returns>";
-        
+
                 // 直接传递完整Request
-                var apiWithRequestObject = $@"{commonComment}
+                var apiWithJsonRequestObject = $@"{commonComment}
         /// <remarks>
         /// 需要手动对 SessionKey 成员赋值<br/>
         /// Version: {api.apiDef.Version}
@@ -77,8 +77,50 @@ namespace EasyMirai.Generator.CSharp.Generator
         public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async(Api.{api.apiDef.Name}.Request request)
         {{
             return await SendAsync<Api.{api.apiDef.Name}.Request, Api.{api.apiDef.Name}.Response>(
-                request, $""{GetCommandSource(requestClassDef, api.cmd, api.method)}"", ""{api.method}"", ""{api.contentType}""); 
+                request, $""{GetCommandSource(requestClassDef, api.cmd, api.method)}"", ""{api.method}""); 
         }}";
+
+                // 直接传递完整Request
+                var members = classDef.Members.Values;
+                var requestDictExpand = string.Join(", ",
+                    requestClassDef.Members.Values.Select(m =>
+                    {
+                        switch (m.Type)
+                        {
+                            case MemberType.String:
+                            case MemberType.Int:
+                            case MemberType.Long:
+                            case MemberType.Boolean:
+                                return $@"{{ ""{m.Name.ToLowerCamel()}"", request.{m.Name.ToUpperCamel()}?.ToString() }}";
+                            case MemberType.Stream:
+                                return $@"{{ ""{m.Name.ToLowerCamel()}"", request.{m.Name.ToUpperCamel()} }}";
+                            default:
+                                return "null";
+                        }
+                    }));
+
+                var apiWithMultipartRequestObject = $@"{commonComment}
+        /// <remarks>
+        /// 需要手动对 SessionKey 成员赋值<br/>
+        /// Version: {api.apiDef.Version}
+        /// </remarks>
+        public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async(Api.{api.apiDef.Name}.Request request)
+        {{
+            var requestDict = new global::System.Collections.Generic.Dictionary<string, object?>()
+            {{
+                {requestDictExpand}
+            }};
+            return await SendMultipartAsync<Api.{api.apiDef.Name}.Response>(
+                requestDict, $""{GetCommandSource(requestClassDef, api.cmd, api.method)}"", ""{api.method}""); 
+        }}";
+
+                string apiWithRequestObject;
+                if (api.contentType == "application/json" || api.method == "Get")
+                    apiWithRequestObject = apiWithJsonRequestObject;
+                else if (api.contentType == "multipart/form-data")
+                    apiWithRequestObject = apiWithMultipartRequestObject;
+                else
+                    apiWithRequestObject = $"#error Unsupported ContentType {api.contentType}";
 
                 // 拆开参数逐个输出
                 var apiExpandArgs = $@"{commonComment}
