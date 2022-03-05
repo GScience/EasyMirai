@@ -88,15 +88,15 @@ namespace {RootNamespace}
 
     public static partial class {SerializerClassName}
     {{{converterClassesSource}
-        public partial class ConverterWrapper<T> where T : ISerializable<T>, new()
+        public sealed partial class ConverterWrapper<T> where T : ISerializable<T>, new()
         {{
-            public delegate void ReadDelegate(ref Utf8JsonReader reader, T obj);
-            public delegate void WriteDelegate(Utf8JsonWriter writer, T value);
+            internal delegate void ReadDelegate(ref Utf8JsonReader reader, T obj);
+            internal delegate void WriteDelegate(Utf8JsonWriter writer, T value);
 
-            public ReadDelegate ReadHandler {{ get; }}
-            public WriteDelegate WriteHandler {{ get; }}
+            internal ReadDelegate ReadHandler {{ get; }}
+            internal WriteDelegate WriteHandler {{ get; }}
 
-            public ConverterWrapper(ReadDelegate read, WriteDelegate write)
+            internal ConverterWrapper(ReadDelegate read, WriteDelegate write)
             {{
                 ReadHandler = read;
                 WriteHandler = write;
@@ -107,12 +107,12 @@ namespace {RootNamespace}
             ConverterWrapper<T> DefaultConverter {{ get; }}
         }}
 
-        public interface ISerializableMessage
+        internal interface ISerializableMessage
         {{
             string Type {{ get; }}
         }}
 
-        public interface ISerializableEvent
+        internal interface ISerializableEvent
         {{
             string Type {{ get; }}
         }}

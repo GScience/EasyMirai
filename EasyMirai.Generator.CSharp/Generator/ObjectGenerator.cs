@@ -73,7 +73,7 @@ namespace EasyMirai.Generator.CSharp.Generator
 
             string source =
                 $"{newLine}{classComment}" +
-                $"{newLine}public class {classDef.Name}{baseClassSource}{classSerializable}{extraInterface}" +
+                $"{newLine}public sealed class {classDef.Name}{baseClassSource}{classSerializable}{extraInterface}" +
                 $"{newLine}{{" +
                 // Converter
                 $"{newLine}\t{classConverterDefineSource}" +

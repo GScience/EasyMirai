@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EasyMirai.CSharp.Adapter
 {
-    public partial class HttpAdapter : IDisposable
+    public sealed partial class HttpAdapter : IDisposable
     {
         private HttpClient _httpClient = new();
 
@@ -31,7 +31,7 @@ namespace EasyMirai.CSharp.Adapter
         /// <param name="cmd"></param>
         /// <param name="method"></param>
         /// <param name="contentType"></param>
-        private async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd, string method)
+        internal async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd, string method)
             where TRequest : MiraiJsonSerializers.ISerializable<TRequest>, new()
             where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
@@ -72,7 +72,7 @@ namespace EasyMirai.CSharp.Adapter
         /// <param name="cmd"></param>
         /// <param name="method"></param>
         /// <param name="contentType"></param>
-        private async Task<TResponse> SendMultipartAsync<TResponse>(Dictionary<string, object?> request, string cmd, string method)
+        internal async Task<TResponse> SendMultipartAsync<TResponse>(Dictionary<string, object?> request, string cmd, string method)
             where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
             HttpResponseMessage response;

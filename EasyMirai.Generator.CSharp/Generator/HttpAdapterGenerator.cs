@@ -154,7 +154,7 @@ namespace {RootNamespace}
     /// <summary>
     /// Http Adapter
     /// </summary>
-    public partial class {classDef.Name} : IDisposable
+    public sealed partial class {classDef.Name} : IDisposable
     {{
         /// <summary>
         /// Session Key

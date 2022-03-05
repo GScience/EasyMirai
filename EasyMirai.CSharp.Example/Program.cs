@@ -23,6 +23,7 @@ var groupListHttp = await session.HttpAdapter!.GroupListAsync();
 
 var uploadImage1 = await session.HttpAdapter.UploadImageAsync(type: "group");
 var uploadImage2 = await session.HttpAdapter.UploadImageAsync(type: "group", img: File.OpenRead("Test.png"), uploadName: "test.png");
+
 session.WsAdapter.EventHookTable.NudgeEvent = async (nudgeEvent) =>
 {
     if (nudgeEvent.Subject!.Id != config.Id && nudgeEvent.Subject!.Kind == "Group")

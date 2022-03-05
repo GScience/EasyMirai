@@ -40,7 +40,7 @@ namespace {RootNamespace}
     /// <remarks>
     /// Version: {classDef.Version}
     /// </remarks>
-    public class {classDef.Name}
+    public sealed class {classDef.Name}
     {{{ObjectGenerator.GenClassSource(classDef.Classes[0], 2, allowNull:true)}
 {ObjectGenerator.GenClassSource(classDef.Classes[1], 2, allowNull: true)}
     }}

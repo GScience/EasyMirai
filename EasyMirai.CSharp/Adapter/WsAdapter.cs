@@ -16,7 +16,7 @@ namespace EasyMirai.CSharp.Adapter
     /// <summary>
     /// Websocket adapter
     /// </summary>
-    public partial class WsAdapter : IDisposable
+    public sealed partial class WsAdapter : IDisposable
     {
         private MiraiConfig _config;
 
@@ -121,8 +121,8 @@ namespace EasyMirai.CSharp.Adapter
                 GC.SuppressFinalize(this);
             }
         }
-        private ClientWebSocket _wsClient = new();
-        private object _wsSendLock = new();
+        internal ClientWebSocket _wsClient = new();
+        internal object _wsSendLock = new();
 
         /// <summary>
         /// 负责记录syncId对应的响应
@@ -142,7 +142,7 @@ namespace EasyMirai.CSharp.Adapter
         /// <summary>
         /// 从Ws中拉取
         /// </summary>
-        private async Task<WsBufferSequence<byte>> PollFromWebSocketAsync(CancellationToken cancellation)
+        internal async Task<WsBufferSequence<byte>> PollFromWebSocketAsync(CancellationToken cancellation)
         {
             WsBufferSegmentSegment<byte>? begin = null;
             WsBufferSegmentSegment<byte>? current = null;
@@ -187,7 +187,7 @@ namespace EasyMirai.CSharp.Adapter
             _ = Task.Factory.StartNew(() => EventLoop(cancellation), cancellation);
         }
 
-        private async void EventLoop(CancellationToken cancellation)
+        internal async void EventLoop(CancellationToken cancellation)
         {
             while (!cancellation.IsCancellationRequested)
             {
@@ -229,7 +229,7 @@ namespace EasyMirai.CSharp.Adapter
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
         /// <param name="request"></param>
-        private async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd)
+        internal async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd)
             where TRequest : MiraiJsonSerializers.ISerializable<TRequest>, new()
             where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
@@ -281,7 +281,7 @@ namespace EasyMirai.CSharp.Adapter
         /// <typeparam name="T"></typeparam>
         /// <param name="sequence"></param>
         /// <returns></returns>
-        private static void WriteWsRequestPackage<T>(ArrayBufferWriter<byte> arrayBuffer, RequestPackage<T> requestPackage)
+        internal static void WriteWsRequestPackage<T>(ArrayBufferWriter<byte> arrayBuffer, RequestPackage<T> requestPackage)
             where T : MiraiJsonSerializers.ISerializable<T>, new()
         {
             var writer = new Utf8JsonWriter(arrayBuffer);
@@ -299,7 +299,7 @@ namespace EasyMirai.CSharp.Adapter
         /// 读取 Websock 数据包
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private static ResponsePackage<T> ReadWsResponcePackage<T>(ReadOnlySequence<byte> sequence) 
+        internal static ResponsePackage<T> ReadWsResponcePackage<T>(ReadOnlySequence<byte> sequence) 
             where T : MiraiJsonSerializers.ISerializable<T>, new()
         {
             var reader = new Utf8JsonReader(sequence);
@@ -340,7 +340,7 @@ namespace EasyMirai.CSharp.Adapter
         /// 读取 Websock 数据包
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private static object ReadWsEvent(ReadOnlySequence<byte> sequence, MiraiJsonSerializers.EventSerializeHookTable EventHookTable)
+        internal static object ReadWsEvent(ReadOnlySequence<byte> sequence, MiraiJsonSerializers.EventSerializeHookTable EventHookTable)
         {
             var reader = new Utf8JsonReader(sequence);
 
@@ -366,7 +366,7 @@ namespace EasyMirai.CSharp.Adapter
             }
         }
 
-        private static int GetSyncId(ReadOnlySequence<byte> sequence)
+        internal static int GetSyncId(ReadOnlySequence<byte> sequence)
         {
             var reader = new Utf8JsonReader(sequence);
 
