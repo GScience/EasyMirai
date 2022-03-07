@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="MuteAll"
+	 desc="全体禁言" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="指定群的群号"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/muteAll" method="Post" desc="使用此方法令指定群进行全体禁言（需要有相关限权）"/>
+		<ws cmd="muteAll" desc="使用此方法令指定群进行全体禁言（需要有相关限权）"/>
+	</adapter>
+</api>

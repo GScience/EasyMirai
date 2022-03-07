@@ -229,13 +229,13 @@ namespace EasyMirai.CSharp.Adapter
         /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
         /// <param name="request"></param>
-        internal async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd)
+        internal async Task<TResponse> SendAsync<TRequest, TResponse>(TRequest request, string cmd, string subCommand)
             where TRequest : MiraiJsonSerializers.ISerializable<TRequest>, new()
             where TResponse : MiraiJsonSerializers.ISerializable<TResponse>, new()
         {
             var arrayBuffer = new ArrayBufferWriter<byte>();
             var syncId = _currentSyncId++;
-            var package = new RequestPackage<TRequest>(syncId, cmd, null, request);
+            var package = new RequestPackage<TRequest>(syncId, cmd, subCommand, request);
 
             // Send request
             WriteWsRequestPackage(arrayBuffer, package);

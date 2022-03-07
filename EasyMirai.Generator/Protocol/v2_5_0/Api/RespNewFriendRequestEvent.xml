@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="RespNewFriendRequestEvent"
+	 desc="添加好友申请" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="eventId" type="Long" desc="响应申请事件的标识"/>
+		<val name="fromId" type="Long" desc="事件对应申请人QQ号"/>
+		<val name="groupId" type="Long" desc="事件对应申请人的群号，可能为0"/>
+		<val name="operate" type="Int" desc="响应的操作类型(0: 同意添加好友, 1: 拒绝添加好友, 2: 拒绝添加好友并添加黑名单，不再接收该用户的好友申请)"/>
+		<val name="message" type="String" desc="回复的信息"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/resp/newFriendRequestEvent" method="Post" desc="使用此方法处理添加好友申请"/>
+		<ws cmd="resp_newFriendRequestEvent" desc="使用此方法处理添加好友申请"/>
+	</adapter>
+</api>

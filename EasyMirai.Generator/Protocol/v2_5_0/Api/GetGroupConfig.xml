@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="GetGroupConfig"
+	 desc="获取群设置" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="指定群的群号"/>
+	</request>
+	
+	<response ref="GroupConfig" />
+
+	<adapter>
+		<http cmd="/groupConfig" method="Get" desc="使用此方法获取群设置"/>
+		<ws cmd="groupConfig" subcmd="get" desc="使用此方法获取群设置"/>
+	</adapter>
+</api>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="UpdateMemberInfo"
+	 desc="修改群员设置" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="指定群的群号"/>
+		<val name="memberId" type="Long" desc="群员QQ号"/>
+		<obj name="info" desc="群员资料">
+			<val name="name" type="String" desc="群名片，即群昵称"/>
+			<val name="specialTitle" type="String" desc="群头衔"/>
+		</obj>
+	</request>
+
+	<response ref="Member"/>
+
+	<adapter>
+		<http cmd="/memberInfo" method="Post" desc="使用此方法修改群员设置（需要有相关限权）"/>
+		<ws cmd="memberInfo" subcmd="update" desc="使用此方法修改群员设置（需要有相关限权）"/>
+	</adapter>
+</api>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Quit"
+	 desc="退出群聊" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="退出的群号"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/quit" method="Post" desc="使用此方法使Bot退出群聊"/>
+		<ws cmd="quit" desc="使用此方法使Bot退出群聊"/>
+	</adapter>
+</api>

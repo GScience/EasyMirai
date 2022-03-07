@@ -373,7 +373,7 @@ namespace {RootNamespace}
         /// <returns></returns>
         private string GenConverterSourceFor(ClassDef classDef, bool isListComponent = false)
         {
-            var readPropertyCaseSource = string.Join(Environment.NewLine, classDef.Members.Values.Select((m, i) =>
+            var readPropertyCaseSource = string.Join(Environment.NewLine, classDef.GetMembersIncludingBase().Select((m, i) =>
             {
                 switch (m.Type)
                 {

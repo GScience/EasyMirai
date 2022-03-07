@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="Mute"
+	 desc="禁言群成员" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="指定群的群号"/>
+		<val name="memberId" type="Long" desc="指定群员QQ号"/>
+		<val name="time" type="Int" desc="禁言时长，单位为秒，最多30天，默认为0"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/mute" method="Post" desc="使用此方法指定群禁言指定群员（需要有相关限权）"/>
+		<ws cmd="mute" desc="使用此方法指定群禁言指定群员（需要有相关限权）"/>
+	</adapter>
+</api>

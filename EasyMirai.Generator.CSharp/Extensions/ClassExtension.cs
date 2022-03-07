@@ -46,6 +46,18 @@ namespace EasyMirai.Generator.CSharp.Extensions
         }
 
         /// <summary>
+        /// 获取所有成员包括基类中的成员
+        /// </summary>
+        /// <param name="classDef"></param>
+        /// <returns></returns>
+        public static IEnumerable<MemberDef> GetMembersIncludingBase(this ClassDef classDef)
+        {
+            if (classDef.Base == null)
+                return classDef.Members.Values;
+            return classDef.Members.Values.Concat(classDef.Base.GetMembersIncludingBase());
+        }
+
+        /// <summary>
         /// 展开构造
         /// </summary>
         /// <param name="classDef"></param>

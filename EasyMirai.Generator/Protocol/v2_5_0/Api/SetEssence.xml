@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="SetEssence"
+	 desc="设置群精华消息" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="精华消息的messageId"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/setEssence" method="Post" desc="使用此方法添加一条消息为精华消息（需要有相关限权）"/>
+		<ws cmd="setEssence" desc="使用此方法添加一条消息为精华消息（需要有相关限权）"/>
+	</adapter>
+</api>

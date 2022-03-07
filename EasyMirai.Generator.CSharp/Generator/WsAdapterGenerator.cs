@@ -12,8 +12,8 @@ namespace EasyMirai.Generator.CSharp.Generator
     {
         public static string RootNamespace => $"{MiraiSource.RootNamespace}.Adapter";
 
-        public List<(string name, ClassDef apiDef, string cmd)> ApiList 
-            = new List<(string name, ClassDef apiDef, string cmd)>();
+        public List<(string name, ClassDef apiDef, string cmd, string subCmd)> ApiList 
+            = new List<(string name, ClassDef apiDef, string cmd, string subCmd)>();
 
         public override void PreProcessing(ClassDef classDef)
         {
@@ -26,10 +26,9 @@ namespace EasyMirai.Generator.CSharp.Generator
             {
                 var apiName = apiFunc.Name;
                 var apiType = classDef.Members.Values.Where(m => m.Name == apiName + "Api").FirstOrDefault();
-                if (classDef.ConstString.TryGetValue(apiName + "Cmd", out var apiCmd))
-                    ApiList.Add((apiName, apiType?.Reference, apiCmd.value));
-                else
-                    ApiList.Add((apiName, apiType?.Reference, ""));
+                var apiCmd = classDef.ConstString.TryGetValue(apiName + "Cmd", out var apiCmdPair) ? apiCmdPair.value : ""; 
+                var apiSubCmd = classDef.ConstString.TryGetValue(apiName + "SubCmd", out var apiSubCmdPair) ? apiSubCmdPair.value : "";
+                ApiList.Add((apiName, apiType?.Reference, apiCmd, apiSubCmd));
             }
         }
 
@@ -56,7 +55,7 @@ namespace EasyMirai.Generator.CSharp.Generator
         public async Task<Api.{api.apiDef.Name}.Response> {api.name}Async(Api.{api.apiDef.Name}.Request request)
         {{
             return await SendAsync<Api.{api.apiDef.Name}.Request, Api.{api.apiDef.Name}.Response>(
-                request, ""{api.cmd}"");
+                request, ""{api.cmd}"", ""{api.subCmd}"");
         }}";
 
                 // 拆开参数逐个输出

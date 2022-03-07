@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="GroupAnno"
+	 desc="群公告" >
+	<val name="content" type="String" desc="群公告内容"/>
+	<val name="senderId" type="Long" desc="发布者账号"/>
+	<val name="fid" type="String" desc="公告唯一id"/>
+	<val name="allConfirmed" type="Boolean" desc="是否所有群成员已确认"/>
+	<val name="confirmedMembersCount" type="Int" desc="确认群成员人数"/>
+	<val name="publicationTime" type="Long" desc="发布时间"/>
+	<ref name="group" ref="Group" desc="群信息"/>
+</object>

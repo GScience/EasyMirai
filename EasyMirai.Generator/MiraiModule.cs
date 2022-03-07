@@ -123,10 +123,12 @@ namespace EasyMirai.Generator
             if (apiDef.WsAdapter != null)
             {
                 var cmd = apiDef.WsAdapter.Command;
+                var subCmd = apiDef.WsAdapter.SubCommand;
 
                 var ws = new MemberDef(apiDef.Name, apiDef.Description, MemberType.Object, _functionDef);
                 _wsAdapter.Members[apiDef.Name] = ws;
                 _wsAdapter.ConstString[apiDef.Name + "Cmd"] = (cmd, TagOnlyForGenerate + "命令字");
+                _wsAdapter.ConstString[apiDef.Name + "SubCmd"] = (subCmd, TagOnlyForGenerate + "子命令字");
 
                 var api = new MemberDef(apiDef.Name + "Api", TagOnlyForGenerate + apiDef.Description, MemberType.Object, classDef);
                 _wsAdapter.Members[api.Name] = api;
@@ -186,6 +188,12 @@ namespace EasyMirai.Generator
             if (ClassTable.ContainsKey(obj))
                 return ClassTable[obj];
 
+            if (obj.Base != null && objBase != null)
+                throw new ArgumentException("Two base for one class is not allowed");
+
+            if (objBase == null && obj.Base != null)
+                objBase = FromObjectDef(obj.Base.TypeDef);
+            
             var classDef = new ClassDef(obj.Name, obj.Description, objBase);
             ClassTable[obj] = classDef;
 

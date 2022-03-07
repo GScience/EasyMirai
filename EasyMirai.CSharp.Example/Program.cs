@@ -16,9 +16,9 @@ await session.Start();
 var startTime = DateTime.Now;
 
 
-//var aboutWs = await session.WsAdapter!.AboutAsync();
+var aboutWs = await session.WsAdapter!.AboutAsync();
 var aboutHttp = await session.HttpAdapter!.AboutAsync();
-//var groupListWs = await session.WsAdapter!.GroupListAsync();
+var groupListWs = await session.WsAdapter!.GroupListAsync();
 var groupListHttp = await session.HttpAdapter!.GroupListAsync();
 
 var uploadImage1 = await session.HttpAdapter.UploadImageAsync(type: "group");

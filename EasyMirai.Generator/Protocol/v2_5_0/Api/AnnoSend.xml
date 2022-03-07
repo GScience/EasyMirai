@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="AnnoSend"
+	 desc="发布群公告" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="群号"/>
+		<val name="content" type="String" desc="公告内容"/>
+		<val name="sendToNewMember" type="Boolean" desc="是否发送给新成员"/>
+		<val name="pinned" type="Boolean" desc="是否置顶"/>
+		<val name="showEditCard" type="Boolean" desc="是否显示群成员修改群名片的引导"/>
+		<val name="showPopup" type="Boolean" desc="是否自动弹出"/>
+		<val name="requireConfirmation" type="Boolean" desc="是否需要群成员确认"/>
+		<val name="imageUrl" type="String" desc="公告图片url"/>
+		<val name="imagePath" type="String" desc="公告图片本地路径"/>
+		<val name="imageBase64" type="String" desc="公告图片base64编码"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<refList name="data" ref="GroupAnno" desc="数据"/>
+	</response>
+
+	<adapter>
+		<http cmd="/anno/publish" method="Post" desc="此方法向指定群发布群公告"/>
+		<ws cmd="anno_publish" desc="此方法向指定群发布群公告"/>
+	</adapter>
+</api>

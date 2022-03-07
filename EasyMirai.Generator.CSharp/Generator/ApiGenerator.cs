@@ -14,6 +14,14 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             base.PreProcessing(classDef);
             classDef.Namespace = RootNamespace;
+
+            var requestDef = classDef.Classes.Where(c => c.Name == "Request").First();
+            foreach (var innerClass in requestDef.Classes)
+                innerClass.Name = "Inner" + innerClass.Name;
+
+            var responseDef = classDef.Classes.Where(c => c.Name == "Response").First();
+            foreach (var innerClass in responseDef.Classes)
+                innerClass.Name = "Inner" + innerClass.Name;
         }
         public override string GenerateFrom(ClassDef classDef, string namespaceDef)
         {

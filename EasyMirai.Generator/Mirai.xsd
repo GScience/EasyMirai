@@ -73,6 +73,7 @@
 	<!--Object Type-->
 	<xs:complexType name="userObject">
 		<xs:group ref="objectGroup"/>
+		<xs:attribute name="ref" type="xs:string"/>
 	</xs:complexType>
 	
 	<!--Api-->
@@ -131,6 +132,7 @@
 			<xs:element name="ws" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:attribute name="cmd" use="required"/>
+					<xs:attribute name="subcmd"/>
 					<xs:attribute name="desc"/>
 				</xs:complexType>
 			</xs:element>

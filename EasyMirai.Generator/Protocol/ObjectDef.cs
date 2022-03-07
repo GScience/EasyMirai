@@ -16,7 +16,7 @@ namespace EasyMirai.Generator.Protocol
     /// <summary>
     /// 类型引用
     /// </summary>
-    public struct ObjectRef
+    public class ObjectRef
     {
         private readonly string _refName;
 
@@ -46,6 +46,11 @@ namespace EasyMirai.Generator.Protocol
     /// </summary>
     public class ObjectDef : ProtocolComponent
     {
+        /// <summary>
+        /// 基类
+        /// </summary>
+        public ObjectRef Base;
+
         /// <summary>
         /// 全局类型定义，负责类型引用查找
         /// </summary>

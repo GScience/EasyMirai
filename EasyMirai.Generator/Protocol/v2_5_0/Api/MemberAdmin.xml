@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="MemberAdmin"
+	 desc="修改群员管理员" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Int" desc="指定群的群号"/>
+		<val name="memberId" type="Int" desc="群员QQ号"/>
+		<val name="assign" type="Boolean" desc="是否设置为管理员"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/memberAdmin" method="Post" desc="使用此方法修改群员的管理员权限（需要有群主限权）"/>
+		<ws cmd="memberAdmin" desc="使用此方法修改群员的管理员权限（需要有群主限权）"/>
+	</adapter>
+</api>

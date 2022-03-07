@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="GetMemberInfo"
+	 desc="获取群员设置" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="target" type="Long" desc="指定群的群号"/>
+		<val name="memberId" type="Long" desc="群员QQ号"/>
+	</request>
+
+	<response ref="Member"/>
+
+	<adapter>
+		<http cmd="/memberInfo" method="Get" desc="使用此方法获取群员设置"/>
+		<ws cmd="memberInfo" subcmd="get" desc="使用此方法获取群员设置"/>
+	</adapter>
+</api>

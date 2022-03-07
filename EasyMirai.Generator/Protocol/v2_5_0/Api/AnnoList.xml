@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="AnnoList"
+	 desc="获取群公告" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="id" type="Long" desc="群号"/>
+		<val name="offset" type="Long" desc="分页参数"/>
+		<val name="size" type="Long" desc="分页参数，默认10"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+		<refList name="data" ref="GroupAnno" desc="数据"/>
+	</response>
+
+	<adapter>
+		<http cmd="/anno/list" method="Get" desc="此方法获取指定群公告列表"/>
+		<ws cmd="anno_list" desc="此方法获取指定群公告列表"/>
+	</adapter>
+</api>

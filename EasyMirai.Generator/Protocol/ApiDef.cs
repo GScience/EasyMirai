@@ -17,9 +17,12 @@ namespace EasyMirai.Generator.Protocol
 
         public string Command { get; private set; }
 
-        public WsAdapterDef(string command, string description)
+        public string SubCommand { get; private set; }
+
+        public WsAdapterDef(string command, string subCommand, string description)
         {
             Command = command;
+            SubCommand = subCommand;
             Description = description;
         }
     }
@@ -109,6 +112,15 @@ namespace EasyMirai.Generator.Protocol
             Request.LoadFieldDefs(xml["request"].ChildNodes);
             Response.LoadFieldDefs(xml["response"].ChildNodes);
 
+            var requestRefClassName = xml["request"].GetAttribute("ref");
+            var responseRefClassName = xml["response"].GetAttribute("ref");
+
+            if (!string.IsNullOrEmpty(requestRefClassName))
+                Request.Base = new ObjectRef(requestRefClassName);
+
+            if (!string.IsNullOrEmpty(responseRefClassName))
+                Response.Base = new ObjectRef(responseRefClassName);
+
             foreach (XmlElement element in xml["adapter"])
             {
                 switch (element.Name)
@@ -124,6 +136,7 @@ namespace EasyMirai.Generator.Protocol
                     case "ws":
                         WsAdapter = new WsAdapterDef(
                             element.GetAttributeValue("cmd"),
+                            element.GetAttributeValue("subcmd", true),
                             element.GetAttributeValue("desc", true));
                         break;
                     default:

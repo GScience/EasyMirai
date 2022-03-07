@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<object xmlns="http://tempuri.org/Mirai.xsd"
+	 name="GroupConfig"
+	 desc="群设置" >
+	<val name="name" type="String" desc="群名称"/>
+	<val name="announcement" type="String" desc="群公告"/>
+	<val name="confessTalk" type="Boolean" desc="是否开启坦白说"/>
+	<val name="allowMemberInvite" type="Boolean" desc="是否允许群员邀请"/>
+	<val name="autoApprove" type="Boolean" desc="是否开启自动审批入群"/>
+	<val name="anonymousChat" type="Boolean" desc="是否允许匿名聊天"/>
+</object>

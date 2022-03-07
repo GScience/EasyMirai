@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<api xmlns="http://tempuri.org/Mirai.xsd"
+	 name="AnnoDelete"
+	 desc="删除群公告" >
+	<request>
+		<val name="sessionKey" type="String" desc="你的session key"/>
+		<val name="id" type="Long" desc="群号"/>
+		<val name="fid" type="String" desc="群公告唯一id"/>
+	</request>
+	
+	<response>
+		<val name="code" type="Int" desc="状态码"/>
+		<val name="msg" type="String" desc="状态消息"/>
+	</response>
+
+	<adapter>
+		<http cmd="/anno/delete" method="Post" desc="此方法删除指定群中一条公告"/>
+		<ws cmd="anno_delete" desc="此方法删除指定群中一条公告"/>
+	</adapter>
+</api>

@@ -18,6 +18,9 @@ namespace EasyMirai.Generator.CSharp.Generator
         {
             base.PreProcessing(classDef);
             classDef.Namespace = MiraiSource.RootNamespace;
+
+            foreach (var innerClass in classDef.Classes)
+                innerClass.Name = "Inner" + innerClass.Name;
         }
 
         /// <summary>
@@ -28,9 +31,6 @@ namespace EasyMirai.Generator.CSharp.Generator
         public static string GenClassSource(ClassDef classDef, int depth = 0, string extraCode = "", string extraInterface = "", bool allowNull = false)
         {
             var newLine = Environment.NewLine + new string('\t', depth);
-
-            foreach (var innerClass in classDef.Classes)
-                innerClass.Name = "Inner" + innerClass.Name;
 
             // 内部类型定义
             var innerClassDefs = classDef.Classes.Select(innerClassDef =>
@@ -52,19 +52,41 @@ namespace EasyMirai.Generator.CSharp.Generator
 
             var classComment = $"/// <summary>{newLine}/// {classDef.Description}{newLine}/// </summary>";
             var converterFullName = SerializeGenerator.GetFullNameOf($"{SerializeGenerator.GetClassConverterName(classDef)}");
-            var classConverterDefineSource
-                = SerializeGenerator.GenerateSerializeSource
-                    ? $"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
-                    $"public static {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> defaultConverter " +
-                    $"= new ({converterFullName}.Read, {converterFullName}.Write);"
-                    : "";
-            var classConverterGetterSource
-                = SerializeGenerator.GenerateSerializeSource
-                    ? $"[global::System.Text.Json.Serialization.JsonIgnore] [global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
-                    $"public {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> DefaultConverter " +
-                    $"=> {classDef.Name}.defaultConverter;"
-                    : "";
 
+            // 是否继承其他可序列化对象
+            var baseOtherSerializableObj = classDef.Base != null && classDef.Base.Namespace == MiraiSource.RootNamespace;
+            string classConverterDefineSource, classConverterGetterSource;
+
+            if (baseOtherSerializableObj)
+            {
+                classConverterDefineSource
+                   = SerializeGenerator.GenerateSerializeSource
+                       ? $"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
+                       $"public static new {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> defaultConverter " +
+                       $"= new ({converterFullName}.Read, {converterFullName}.Write);"
+                       : "";
+                classConverterGetterSource
+                    = SerializeGenerator.GenerateSerializeSource
+                        ? $"[global::System.Text.Json.Serialization.JsonIgnore] [global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
+                        $"public new {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> DefaultConverter " +
+                        $"=> {classDef.Name}.defaultConverter;"
+                        : "";
+            }
+            else
+            {
+                classConverterDefineSource
+                    = SerializeGenerator.GenerateSerializeSource
+                        ? $"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
+                        $"public static {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> defaultConverter " +
+                        $"= new ({converterFullName}.Read, {converterFullName}.Write);"
+                        : "";
+                classConverterGetterSource
+                    = SerializeGenerator.GenerateSerializeSource
+                        ? $"[global::System.Text.Json.Serialization.JsonIgnore] [global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)] " +
+                        $"public {SerializeGenerator.GetFullNameOf("ConverterWrapper")}<{classDef.FullName}> DefaultConverter " +
+                        $"=> {classDef.Name}.defaultConverter;"
+                        : "";
+            }
             var baseClassSource = classDef.Base == null ? "" : $" : {classDef.Base.Name}";
 
             var classSerializable
@@ -77,7 +99,7 @@ namespace EasyMirai.Generator.CSharp.Generator
 
             string source =
                 $"{newLine}{classComment}" +
-                $"{newLine}public sealed class {classDef.Name}{baseClassSource}{classSerializable}{extraInterface}" +
+                $"{newLine}public class {classDef.Name}{baseClassSource}{classSerializable}{extraInterface}" +
                 $"{newLine}{{" +
                 // Converter
                 $"{newLine}\t{classConverterDefineSource}" +

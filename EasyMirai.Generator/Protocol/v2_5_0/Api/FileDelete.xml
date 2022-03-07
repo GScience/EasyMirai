@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <api xmlns="http://tempuri.org/Mirai.xsd"
-	 name="FileMkdir"
-	 desc="创建文件夹" >
+	 name="FileDelete"
+	 desc="删除文件" >
 	<request>
 		<val name="sessionKey" type="String" desc="已经激活的Session"/>
 		<val name="id" type="String" desc="文件夹id, 空串为根目录"/>
@@ -9,20 +9,15 @@
 		<val name="target" type="Long" desc="群号或好友QQ号"/>
 		<val name="group" type="Long" desc="群号"/>
 		<val name="qq" type="Long" desc="好友QQ号"/>
-		<val name="directoryName" type="String" desc="新建文件夹名"/>
 	</request>
 	
 	<response>
 		<val name="code" type="Int" desc="状态码"/>
 		<val name="msg" type="String" desc="状态消息"/>
-		<val name="isFile" type="Boolean" desc="是否文件"/>
-		<val name="isDictionary" type="Boolean" desc="是否文件夹"/>
-		<val name="isDirectory" type="Boolean" desc="是否文件夹(弃用)"/>
-		<refList name="data" ref="FileInfo" desc="数据"/>
 	</response>
 
 	<adapter>
-		<http cmd="/file/mkdir" method="Post" desc="使用此方法创建文件夹"/>
-		<ws cmd="file_mkdir" desc="使用此方法创建文件夹"/>
+		<http cmd="/file/delete" method="Post" desc="使用此方法删除文件"/>
+		<ws cmd="file_delete" desc="使用此方法删除文件"/>
 	</adapter>
 </api>
